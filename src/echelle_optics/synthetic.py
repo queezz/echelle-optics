@@ -7,8 +7,8 @@ Coordinate conventions
 ----------------------
 - x axis  →  dispersion direction  (detector columns)
 - y axis  ↓  cross-dispersion      (detector rows, order separation)
-- origin (0, 0) is the top-left corner of the array, consistent with
-  numpy/matplotlib imshow default.
+- origin (0, 0) is the bottom-left corner when displayed with
+  ``imshow(origin='lower')``.
 
 Order layout
 ------------
@@ -51,6 +51,7 @@ def render_echelle_lines(
     reference_order: int | None = None,
     order_spacing_px: float = 55.0,
     psf_sigma_px: float = 1.5,
+    psf_sigma_y_px: float | None = None,
     color: bool = False,
     background: float = 0.0,
     read_noise: float = 0.0,
@@ -80,7 +81,17 @@ def render_echelle_lines(
     order_spacing_px:
         Vertical separation between adjacent orders in pixels.
     psf_sigma_px:
-        Gaussian PSF standard deviation in pixels (same for x and y).
+        Gaussian PSF standard deviation along the **dispersion** axis (x) in
+        pixels.  Also used for the cross-dispersion axis when
+        *psf_sigma_y_px* is ``None``.
+    psf_sigma_y_px:
+        Gaussian PSF standard deviation along the **cross-dispersion** axis
+        (y) in pixels.  Defaults to *psf_sigma_px* (symmetric PSF).
+
+        Set this larger than *psf_sigma_px* to simulate a slit that is
+        taller than it is wide — the typical appearance of echelle orders
+        on a real detector where the spatial (slit-height) direction maps
+        onto the cross-dispersion axis.
     color:
         If ``True`` return a ``(H, W, 3)`` float32 RGB array; otherwise
         return a ``(H, W)`` float32 grey array.
@@ -97,6 +108,9 @@ def render_echelle_lines(
     numpy.ndarray
         Float32 array of shape ``(H, W)`` or ``(H, W, 3)``.
     """
+    sig_x = psf_sigma_px
+    sig_y = psf_sigma_y_px if psf_sigma_y_px is not None else psf_sigma_px
+
     det = spectrometer.detector
     h, w = shape if shape is not None else (det.height_px, det.width_px)
     xc = x_center if x_center is not None else w / 2.0
@@ -120,11 +134,11 @@ def render_echelle_lines(
         )
         order_params[m] = (lam_c, disp)
 
-    # Build Gaussian kernel look-up table
-    kernel_r = int(np.ceil(4.0 * psf_sigma_px))
-    ksize = 2 * kernel_r + 1
-    kx = np.arange(ksize) - kernel_r
-    gauss_1d = np.exp(-0.5 * (kx / psf_sigma_px) ** 2)
+    # Separate kernel radii for x and y
+    kernel_rx = int(np.ceil(4.0 * sig_x))
+    kernel_ry = int(np.ceil(4.0 * sig_y))
+    kx = np.arange(2 * kernel_rx + 1) - kernel_rx
+    ky = np.arange(2 * kernel_ry + 1) - kernel_ry
 
     # Output buffer(s)
     if color:
@@ -145,13 +159,13 @@ def render_echelle_lines(
             xp = xc + (lam_nm - lam_c) / disp
             yp = yc + (m - ref_order) * order_spacing_px
 
-            # Integer centres with sub-pixel offset retained in Gaussian
+            # Integer centres; sub-pixel offset carried into Gaussian
             xi = int(round(xp))
             yi = int(round(yp))
 
             # Bounding box on detector
-            x0, x1 = xi - kernel_r, xi + kernel_r + 1
-            y0, y1 = yi - kernel_r, yi + kernel_r + 1
+            x0, x1 = xi - kernel_rx, xi + kernel_rx + 1
+            y0, y1 = yi - kernel_ry, yi + kernel_ry + 1
 
             # Clip to detector
             ax0 = max(x0, 0)
@@ -166,11 +180,11 @@ def render_echelle_lines(
             ky0 = ay0 - y0
             ky1 = ay1 - y0
 
-            # Sub-pixel shift applied to Gaussian centres
+            # Sub-pixel shift
             dx = xp - xi
             dy = yp - yi
-            gx = np.exp(-0.5 * ((kx + dx) / psf_sigma_px) ** 2)
-            gy = np.exp(-0.5 * ((kx + dy) / psf_sigma_px) ** 2)
+            gx = np.exp(-0.5 * ((kx + dx) / sig_x) ** 2)
+            gy = np.exp(-0.5 * ((ky + dy) / sig_y) ** 2)
             psf_patch = np.outer(gy[ky0:ky1], gx[kx0:kx1]) * float(intensity)
 
             if color:
