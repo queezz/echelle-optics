@@ -47,9 +47,9 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/queezz/echelle_optics"
-Repository = "https://github.com/queezz/echelle_optics"
-Issues = "https://github.com/queezz/echelle_optics/issues"
+Homepage = "https://github.com/queezz/echelle-optics"
+Repository = "https://github.com/queezz/echelle-optics"
+Issues = "https://github.com/queezz/echelle-optics/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
