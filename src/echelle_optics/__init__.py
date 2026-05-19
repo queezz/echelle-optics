@@ -1,4 +1,12 @@
 from ._version import __version__
+from .calibration import (
+    CalibrationLine,
+    OrderWavelengthFit,
+    WavelengthSolution,
+    fit_wavelength_solution,
+    load_lhd_cmos_calibration,
+    load_lhd_cmos_wavelength_solution,
+)
 from .color import wavelength_to_rgb
 from .detector import Detector
 from .geometry import (
@@ -45,6 +53,13 @@ __all__ = [
     "lhd_cmos_echelle",
     # color
     "wavelength_to_rgb",
+    # calibration
+    "CalibrationLine",
+    "OrderWavelengthFit",
+    "WavelengthSolution",
+    "load_lhd_cmos_calibration",
+    "fit_wavelength_solution",
+    "load_lhd_cmos_wavelength_solution",
     # synthetic
     "render_echelle_lines",
     "render_white_light",

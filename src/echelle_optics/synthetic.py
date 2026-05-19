@@ -33,7 +33,7 @@ Geometry modes
 
 from __future__ import annotations
 
-from typing import Optional, Sequence
+from typing import TYPE_CHECKING, Optional, Sequence
 
 import numpy as np
 
@@ -41,6 +41,9 @@ from .color import wavelength_to_rgb
 from .geometry import DetectorGeometry, GeometryMode, load_lhd_cmos_geometry
 from .grating import central_wavelength_nm, linear_dispersion_nm_per_px
 from .spectrometer import EchelleSpectrometer
+
+if TYPE_CHECKING:
+    from .calibration import WavelengthSolution
 
 __all__ = ["render_echelle_lines", "render_white_light"]
 
@@ -95,6 +98,7 @@ def render_echelle_lines(
     read_noise: float = 0.0,
     seed: int | None = None,
     geometry: Optional[DetectorGeometry | GeometryMode] = None,
+    wavelength_solution: Optional["WavelengthSolution"] = None,
 ) -> np.ndarray:
     """Render spectral lines onto a synthetic echelle detector frame.
 
@@ -112,6 +116,7 @@ def render_echelle_lines(
     x_center:
         Column (pixel) at which the central wavelength of *reference_order*
         is placed.  Defaults to ``width / 2``.
+        Ignored for orders covered by *wavelength_solution*.
     y_center:
         Row (pixel) at which *reference_order* is placed.
         Defaults to ``height / 2``.  Ignored when using measured geometry.
@@ -148,6 +153,13 @@ def render_echelle_lines(
         ``GeometryMode.IDEAL_STRAIGHT`` for constant-y orders;
         ``GeometryMode.MEASURED_LHD_CMOS`` or a ``DetectorGeometry``
         instance for empirical curved traces.
+    wavelength_solution:
+        Optional empirical :class:`~echelle_optics.calibration.WavelengthSolution`.
+        When provided, the x-pixel position of each line is determined by
+        inverting the fitted polynomial λ(x) rather than the theoretical
+        Littrow dispersion formula.  Falls back to theory for orders not
+        covered by the solution or wavelengths outside its range.
+        Best used with the full detector size (2560 × 2160 px).
 
     Returns
     -------
@@ -202,8 +214,14 @@ def render_echelle_lines(
             if disp == 0.0:
                 continue
 
-            # x position from spectral physics
-            xp = xc + (lam_nm - lam_c) / disp
+            # x position: empirical calibration if available, else theory
+            if wavelength_solution is not None and wavelength_solution.has_order(m):
+                try:
+                    xp = wavelength_solution.pixel_at(lam_nm, m)
+                except (ValueError, KeyError):
+                    xp = xc + (lam_nm - lam_c) / disp
+            else:
+                xp = xc + (lam_nm - lam_c) / disp
             # y position from detector geometry
             yp = float(_order_y_position(m, xp, yc, ref_order, order_spacing_px, geom))
 
@@ -261,6 +279,7 @@ def render_white_light(
     color: bool = True,
     background: float = 0.0,
     geometry: Optional[DetectorGeometry | GeometryMode] = None,
+    wavelength_solution: Optional["WavelengthSolution"] = None,
 ) -> np.ndarray:
     """Render a white-light (continuum) frame showing the span of every order.
 
@@ -283,6 +302,7 @@ def render_white_light(
     x_center:
         Column at which each order's central wavelength is placed.
         Defaults to ``width / 2``.
+        Ignored for orders covered by *wavelength_solution*.
     y_center:
         Row at which *reference_order* is placed.  Defaults to ``height / 2``.
         Ignored when using measured geometry.
@@ -305,6 +325,11 @@ def render_white_light(
         ``GeometryMode.IDEAL_STRAIGHT`` for constant-y orders;
         ``GeometryMode.MEASURED_LHD_CMOS`` or a ``DetectorGeometry``
         instance for empirical curved traces.
+    wavelength_solution:
+        Optional empirical :class:`~echelle_optics.calibration.WavelengthSolution`.
+        When provided, per-column wavelength is read from the fitted polynomial
+        λ(x) rather than the Littrow formula.  Falls back to theory for orders
+        not covered by the solution.
 
     Returns
     -------
@@ -353,7 +378,10 @@ def render_white_light(
         gy = np.exp(-0.5 * (dy / psf_sigma_y_px) ** 2)  # (h, w)
 
         # Wavelength at every detector column
-        lam_at_x = lam_c + (x_idx - xc) * disp  # (w,)
+        if wavelength_solution is not None and wavelength_solution.has_order(m):
+            lam_at_x = wavelength_solution.wavelength_at(x_idx, m).astype(np.float32)
+        else:
+            lam_at_x = lam_c + (x_idx - xc) * disp  # (w,)
 
         if color:
             rgb_at_x = np.array(
