@@ -74,4 +74,20 @@ extra_css:
 
 nav:
   - Home: index.md
+  - Guide:
+      - Getting Started: guide/getting_started.md
+      - Echelle Physics: guide/echelle_physics.md
+      - Detector Geometry: guide/detector_geometry.md
+      - Synthetic Images: guide/synthetic_images.md
+      - Architecture: guide/architecture.md
+  - Examples:
+      - Overview: examples/index.md
+      - Order Table: examples/order_table.md
+      - Dispersion Intuition: examples/dispersion_intuition.md
+      - Synthetic Lamp Image: examples/synthetic_lamp.md
+      - Synthetic Image Parameters: examples/synthetic_parameters.md
+      - Detector Geometry: examples/detector_geometry.md
+  - Development:
+      - Agent Notes: development/agent_notes.md
+      - Future Work: development/future_work.md
   - API Reference: reference.md
