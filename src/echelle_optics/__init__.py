@@ -10,7 +10,7 @@ from .grating import (
     physical_order_from_wavelength,
 )
 from .spectrometer import EchelleGrating, EchelleSpectrometer, lhd_cmos_echelle
-from .synthetic import render_echelle_lines
+from .synthetic import render_echelle_lines, render_white_light
 
 __all__ = [
     "__version__",
@@ -31,4 +31,5 @@ __all__ = [
     "wavelength_to_rgb",
     # synthetic
     "render_echelle_lines",
+    "render_white_light",
 ]

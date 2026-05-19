@@ -38,7 +38,7 @@ from .color import wavelength_to_rgb
 from .grating import central_wavelength_nm, linear_dispersion_nm_per_px
 from .spectrometer import EchelleSpectrometer
 
-__all__ = ["render_echelle_lines"]
+__all__ = ["render_echelle_lines", "render_white_light"]
 
 
 def render_echelle_lines(
@@ -197,5 +197,110 @@ def render_echelle_lines(
     if read_noise > 0.0:
         noise = rng.normal(0.0, read_noise, size=frame.shape).astype(np.float32)
         frame += noise
+
+    return frame
+
+
+def render_white_light(
+    spectrometer: EchelleSpectrometer,
+    orders: Sequence[int],
+    shape: tuple[int, int] | None = None,
+    x_center: float | None = None,
+    y_center: float | None = None,
+    reference_order: int | None = None,
+    order_spacing_px: float = 55.0,
+    psf_sigma_y_px: float = 12.0,
+    color: bool = True,
+    background: float = 0.0,
+) -> np.ndarray:
+    """Render a white-light (continuum) frame showing the span of every order.
+
+    Each echelle order appears as a horizontal band filled with uniform
+    intensity (grayscale) or wavelength-dependent colour (colour mode).
+    The cross-dispersion profile is a Gaussian with width *psf_sigma_y_px*.
+    The dispersion axis is filled entirely — every detector column maps to
+    a wavelength via the grating equation, so the band width directly
+    reflects each order's wavelength coverage.
+
+    Unlike :func:`render_echelle_lines`, this function has no per-line
+    loop.  It vectorises over detector columns using numpy broadcasting,
+    so rendering the full 2160 × 2560 frame is fast.
+
+    Parameters
+    ----------
+    spectrometer:
+        :class:`~echelle_optics.spectrometer.EchelleSpectrometer` instance.
+    orders:
+        Diffraction orders to render.
+    shape:
+        ``(height, width)`` of the output array.  Defaults to the detector size.
+    x_center:
+        Column at which each order's central wavelength is placed.
+        Defaults to ``width / 2``.
+    y_center:
+        Row at which *reference_order* is placed.  Defaults to ``height / 2``.
+    reference_order:
+        Order placed at *y_center*.  Defaults to the median of *orders*.
+    order_spacing_px:
+        Cross-dispersion separation between adjacent orders in pixels.
+    psf_sigma_y_px:
+        Gaussian cross-dispersion profile standard deviation in pixels.
+    color:
+        If ``True`` (default) return an ``(H, W, 3)`` float32 RGB array where
+        each column is tinted by the wavelength it carries.  If ``False``
+        return a ``(H, W)`` float32 greyscale array.
+    background:
+        Uniform background level added to every pixel.
+
+    Returns
+    -------
+    numpy.ndarray
+        Float32 array of shape ``(H, W)`` or ``(H, W, 3)``.
+    """
+    det = spectrometer.detector
+    h, w = shape if shape is not None else (det.height_px, det.width_px)
+    xc = x_center if x_center is not None else w / 2.0
+    yc = y_center if y_center is not None else h / 2.0
+    ref_order = reference_order if reference_order is not None else int(np.median(orders))
+
+    if color:
+        frame = np.full((h, w, 3), background, dtype=np.float32)
+    else:
+        frame = np.full((h, w), background, dtype=np.float32)
+
+    y_idx = np.arange(h, dtype=np.float32)  # (h,)
+    x_idx = np.arange(w, dtype=np.float32)  # (w,)
+
+    for m in orders:
+        lam_c = central_wavelength_nm(
+            m, spectrometer.grating.grooves_per_mm, spectrometer.grating.blaze_deg
+        )
+        disp = linear_dispersion_nm_per_px(
+            m,
+            spectrometer.grating.grooves_per_mm,
+            spectrometer.beta_deg,  # type: ignore[arg-type]
+            spectrometer.focal_length_mm,
+            det.pixel_size_um,
+        )
+        if disp == 0.0:
+            continue
+
+        # Cross-dispersion Gaussian profile — shape (h,)
+        y_order = yc + (m - ref_order) * order_spacing_px
+        gy = np.exp(-0.5 * ((y_idx - y_order) / psf_sigma_y_px) ** 2)
+
+        # Wavelength at every detector column — shape (w,)
+        lam_at_x = lam_c + (x_idx - xc) * disp
+
+        if color:
+            # RGB colour for each column — shape (w, 3)
+            rgb_at_x = np.array(
+                [wavelength_to_rgb(float(l)) for l in lam_at_x], dtype=np.float32
+            )
+            # Outer product: gy (h,) × rgb_at_x (w, 3) → (h, w, 3)
+            frame += gy[:, np.newaxis, np.newaxis] * rgb_at_x[np.newaxis, :, :]
+        else:
+            # Uniform intensity across the order — (h, 1) broadcasts over w
+            frame += gy[:, np.newaxis]
 
     return frame
