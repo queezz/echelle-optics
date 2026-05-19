@@ -10,9 +10,9 @@ structural changes.
 
 ```
 echelle_optics/
-├── grating.py        ← diffraction math (pure functions)
-├── detector.py       ← pixel grid metadata (dataclass)
-├── spectrometer.py   ← instrument model + order table
+├── grating.py        ← EchelleGrating dataclass + diffraction math
+├── detector.py       ← Detector dataclass (pixel grid metadata)
+├── spectrometer.py   ← EchelleSpectrometer, order table, instrument factories
 ├── geometry.py       ← empirical curved order traces
 ├── synthetic.py      ← 2D image renderer
 ├── color.py          ← wavelength → RGB
@@ -61,12 +61,13 @@ flowchart TB
 
 | Module | Responsibility |
 |---|---|
-| `grating.py` | Standalone functions: groove spacing, Littrow constant, central wavelength, dispersion, FSR |
+| `grating.py` | `EchelleGrating` dataclass + pure functions: groove spacing, Littrow constant, central wavelength, dispersion, FSR |
 | `detector.py` | `Detector` dataclass: pixel count, pixel size, derived mm dimensions |
-| `spectrometer.py` | `EchelleGrating`, `EchelleSpectrometer`, `order_table()`, `lhd_cmos_echelle()` factory |
+| `spectrometer.py` | `EchelleSpectrometer`, `order_table()`, instrument factory functions (`lhd_cmos_echelle()`) |
 
-These modules are **independent of each other** except that `EchelleSpectrometer` holds
-an `EchelleGrating` and a `Detector`. They have no dependency on geometry or rendering.
+`grating.py` owns both the grating parameter container (`EchelleGrating`) and all
+grating math. `spectrometer.py` assembles grating + detector into a complete instrument
+model and generates order tables. These modules have no dependency on geometry or rendering.
 
 ### Layer 2 — Detector geometry
 
@@ -157,7 +158,8 @@ from echelle_optics import (
     # Instrument factory
     lhd_cmos_echelle,
 
-    # Grating math
+    # Grating (parameter container + math — all in grating.py)
+    EchelleGrating,
     groove_spacing_nm, littrow_constant_nm, central_wavelength_nm,
     physical_order_from_wavelength, linear_dispersion_nm_per_px,
     free_spectral_range_nm,
@@ -165,8 +167,8 @@ from echelle_optics import (
     # Detector
     Detector,
 
-    # Spectrometer
-    EchelleGrating, EchelleSpectrometer,
+    # Spectrometer (instrument assembly + order table)
+    EchelleSpectrometer,
 
     # Geometry
     GeometryMode, OrderTrace, DetectorGeometry,

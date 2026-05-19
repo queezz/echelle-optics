@@ -9,20 +9,13 @@ import pandas as pd
 
 from .detector import Detector
 from .grating import (
+    EchelleGrating,
     central_wavelength_nm,
     free_spectral_range_nm,
     linear_dispersion_nm_per_px,
 )
 
 __all__ = ["EchelleGrating", "EchelleSpectrometer", "lhd_cmos_echelle"]
-
-
-@dataclass
-class EchelleGrating:
-    """Reflective echelle grating parameters."""
-
-    grooves_per_mm: float
-    blaze_deg: float
 
 
 @dataclass

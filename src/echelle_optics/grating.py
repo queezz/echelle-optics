@@ -1,4 +1,4 @@
-"""Core reflective echelle grating formulas.
+"""Core reflective echelle grating formulas and parameter container.
 
 All wavelengths in nanometres, angles in degrees, lengths in mm or µm as noted.
 Sign convention: grating equation  m λ = d (sin α + sin β).
@@ -6,8 +6,10 @@ Quasi-Littrow: α ≈ β ≈ blaze_angle.
 """
 
 import math
+from dataclasses import dataclass
 
 __all__ = [
+    "EchelleGrating",
     "groove_spacing_nm",
     "littrow_constant_nm",
     "central_wavelength_nm",
@@ -15,6 +17,22 @@ __all__ = [
     "linear_dispersion_nm_per_px",
     "free_spectral_range_nm",
 ]
+
+
+@dataclass
+class EchelleGrating:
+    """Reflective echelle grating parameters.
+
+    Parameters
+    ----------
+    grooves_per_mm:
+        Ruling density in grooves per mm.
+    blaze_deg:
+        Blaze angle in degrees.
+    """
+
+    grooves_per_mm: float
+    blaze_deg: float
 
 
 def groove_spacing_nm(grooves_per_mm: float) -> float:

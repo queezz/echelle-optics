@@ -10,6 +10,7 @@ from .geometry import (
     load_lhd_cmos_pattern,
 )
 from .grating import (
+    EchelleGrating,
     central_wavelength_nm,
     free_spectral_range_nm,
     groove_spacing_nm,
@@ -17,7 +18,7 @@ from .grating import (
     littrow_constant_nm,
     physical_order_from_wavelength,
 )
-from .spectrometer import EchelleGrating, EchelleSpectrometer, lhd_cmos_echelle
+from .spectrometer import EchelleSpectrometer, lhd_cmos_echelle
 from .synthetic import render_echelle_lines, render_white_light
 
 __all__ = [

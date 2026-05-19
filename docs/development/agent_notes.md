@@ -109,9 +109,9 @@ in production analysis and never silently fall back to it.
 
 | Module | Does | Does NOT |
 |---|---|---|
-| `grating.py` | Diffraction math, Littrow, FSR, dispersion | Pixel positions, curvature |
-| `detector.py` | Pixel count, pixel size, mm dimensions | Wavelengths, geometry |
-| `spectrometer.py` | Instrument model, order table, instrument factories | Geometry, rendering, calibration |
+| `grating.py` | `EchelleGrating` dataclass, Littrow math, dispersion, FSR | Pixel positions, instrument assembly |
+| `detector.py` | `Detector` dataclass, pixel count, pixel size, mm dimensions | Wavelengths, geometry |
+| `spectrometer.py` | `EchelleSpectrometer`, order table, instrument factory functions | Geometry, rendering, calibration |
 | `geometry.py` | Load calibration pattern, fit traces, `y_at(order, x)` | Wavelengths, rendering |
 | `synthetic.py` | Combine physics + geometry into 2D images | Physics derivations, calibration fitting |
 | `color.py` | Wavelength → linear RGB for display | Anything else |
