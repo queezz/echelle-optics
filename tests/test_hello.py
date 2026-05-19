@@ -55,6 +55,19 @@ def test_dispersion_lhd_approx():
         assert abs(disp - expected) / expected < 0.01, f"order {m}: {disp:.5f} vs {expected:.5f}"
 
 
+def test_dispersion_scales_with_pixel_size():
+    """Dispersion is proportional to pixel size: 13 µm gives ~2× the 6.5 µm value.
+
+    This is a numerical scaling check only.  The 13 µm case does not correspond
+    to the LHD CMOS instrument and is not a supported configuration.
+    """
+    m = 40
+    disp_cmos = linear_dispersion_nm_per_px(m, LHD_GROOVES, LHD_BLAZE, LHD_F, pixel_size_um=6.5)
+    disp_ccd = linear_dispersion_nm_per_px(m, LHD_GROOVES, LHD_BLAZE, LHD_F, pixel_size_um=13.0)
+    ratio = disp_ccd / disp_cmos
+    assert abs(ratio - 2.0) < 1e-9
+
+
 def test_free_spectral_range():
     lam = 500.0
     m = 40

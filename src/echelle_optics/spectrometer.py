@@ -97,12 +97,18 @@ class EchelleSpectrometer:
 # ---------------------------------------------------------------------------
 
 def lhd_cmos_echelle() -> EchelleSpectrometer:
-    """Return an :class:`EchelleSpectrometer` for the LHD CMOS echelle system.
+    """Return the primary built-in instrument: the LHD CMOS echelle spectrometer.
 
-    Hardware defaults:
-    - Newport echelle: 46.1 gr/mm, blaze 32°
-    - Collimating/camera mirror: f = 304.8 mm
-    - Andor Zyla 4.2 sCMOS: 2560 × 2160 px, 6.5 µm pixel
+    This is the main reference instrument for the package.  Use it as the
+    starting point for order-table generation and synthetic detector images.
+
+    Hardware configuration:
+
+    - Grating: Newport echelle, 46.1 gr/mm, blaze angle 32°, quasi-Littrow
+    - Camera/collimator: f = 304.8 mm
+    - Detector: Andor Zyla 4.2 sCMOS, 2560 × 2160 px, 6.5 µm pixel pitch
+    - Useful orders: ~30–58 (wavelength range ~370–720 nm)
+    - Dispersion: ≈ 0.392 / m  nm/px
     """
     grating = EchelleGrating(grooves_per_mm=46.1, blaze_deg=32.0)
     detector = Detector(width_px=2560, height_px=2160, pixel_size_um=6.5)
