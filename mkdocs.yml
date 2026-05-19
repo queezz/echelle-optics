@@ -1,7 +1,7 @@
-site_name: echelle_optics
+site_name: echelle-optics
 site_description: Spectrometer optics, dispersion, and geometry utilities
-repo_url: https://github.com/queezz/echelle_optics
-repo_name: queezz/echelle_optics
+repo_url: https://github.com/queezz/echelle-optics
+repo_name: queezz/echelle-optics
 docs_dir: docs
 
 theme:
