@@ -31,9 +31,12 @@ flowchart TB
         D[detector.py]
         S[spectrometer.py]
     end
-    subgraph geometry_layer["Detector geometry"]
+    subgraph geometry_layer["Detector geometry (per instrument)"]
         GEO[geometry.py]
-        PAT[(pattern_CMOS_20240305.txt)]
+        PAT[(data/pattern_*.txt)]
+    end
+    subgraph cal["Wavelength calibration primitives (planned)"]
+        WS[calibration.py]
     end
     subgraph render["Synthetic rendering"]
         COL[color.py]
@@ -43,7 +46,9 @@ flowchart TB
     G --> S
     D --> S
     S --> SYN
+    S --> WS
     GEO --> SYN
+    GEO --> WS
     PAT --> GEO
     COL --> SYN
 ```
@@ -83,27 +88,40 @@ question: given an order index and an x pixel, what y pixel is the order center 
 The renderer imports from both Layer 1 and Layer 2 but does not modify either. It is
 the only place where x and y coordinates are combined.
 
+### Layer 4 — Wavelength calibration primitives (planned)
+
+| Module | Responsibility |
+|---|---|
+| `calibration.py` (future) | `WavelengthSolution` data structure, `wavelength_at(x, order)`, residual containers |
+
+This layer consumes both Layer 1 (dispersion for initial guesses) and Layer 2
+(geometry traces for 2D mapping). It provides the data structures that extraction
+pipelines in `echelle_spectra` populate and consume. Fitting arc lines to pixel
+positions is the responsibility of `echelle_spectra`, not this module.
+
 ---
 
 ## Key design boundaries
 
-**Do not merge the geometry layer into the spectrometer model.**
+**Physics and geometry are independent.**
 
-`EchelleSpectrometer` knows about wavelengths and dispersions. It does not know about
-detector pixel positions. This separation exists because:
+`EchelleSpectrometer` knows about wavelengths and dispersions. `DetectorGeometry` knows
+about pixel y-positions. Neither knows about the other. This separation means:
 
-1. The geometry is instrument-specific and empirical — it would pollute a general
-   grating model.
-2. The geometry may be replaced (different calibration date, different instrument)
-   without touching the physics model.
-3. Future wavelength calibration code will also need to consume geometry independently
-   of the grating model.
+- Geometry can change (new calibration date, different instrument) without touching physics
+- New instruments reuse the same physics layer with different geometry data
+- Wavelength calibration code can consume both layers without coupling them
 
-**Do not compute curvature from grating theory inside the renderer.**
+**Geometry is empirical, not derived.**
 
-Curvature is measured, not derived. The `IDEAL_STRAIGHT` mode exists for testing, not
-as a physical default. Never silently fall back to straight orders when curved geometry
-is available.
+Order curvature is measured from real calibration frames, not computed from optics.
+`IDEAL_STRAIGHT` mode is for tests only — never use it as a production default.
+
+**Calibration primitives belong here; pipelines belong in `echelle_spectra`.**
+
+`echelle_optics` provides the data structures (`WavelengthSolution`) and evaluation
+methods (`wavelength_at()`). `echelle_spectra` populates those structures by fitting
+arc-lamp observations. The boundary is: data model here, execution there.
 
 ---
 
@@ -166,10 +184,14 @@ from echelle_optics import (
 
 ## What is not in this package
 
-| Missing piece | Reason |
+| Item | Where it belongs |
 |---|---|
-| Wavelength calibration | Fitting arc lines to pixel coordinates — planned as a separate module or package |
-| Spectral extraction | Summing counts along a curved order trace — out of scope |
-| Full optical raytrace | This is not Zemax; physics is Littrow approximation only |
-| Multi-instrument config | Only LHD CMOS bundled; extension is by user code |
+| Arc-line fitting against real detector frames | `echelle_spectra` |
+| Full spectral extraction pipelines | `echelle_spectra` |
+| SpectroCube file production | `echelle_spectra` (using `spectrocube`) |
+| GUI visualization | `spectroview` |
+| Full optical raytrace | Out of scope — physics is Littrow approximation only |
 | Flux / throughput model | Blaze efficiency, QE, atmospheric transmission — out of scope |
+
+See [Ecosystem](../development/ecosystem.md) for the full picture of how the packages
+relate to each other.

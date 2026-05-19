@@ -90,4 +90,5 @@ nav:
   - Development:
       - Agent Notes: development/agent_notes.md
       - Future Work: development/future_work.md
+      - Ecosystem: development/ecosystem.md
   - API Reference: reference.md

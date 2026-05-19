@@ -1,147 +1,164 @@
 # Future Work
 
-This page documents planned directions for `echelle_optics`. Items are organized by
-the layer they would add or extend.
-
-Each item should remain **separate from the existing four layers** (physics, geometry,
-rendering, color). New capabilities should be implemented as new modules or packages
-that consume the existing API.
+Planned directions for `echelle_optics`, organized by layer. Items marked as
+**in scope** belong in this package. Items marked **downstream** belong in
+`echelle_spectra` or other packages that consume this one.
 
 ---
 
-## Wavelength calibration
+## Instrument profile system
+
+**Status**: partial — LHD CMOS is the only profile
+
+The current code supports multiple instruments architecturally but has no formal
+profile registry. A cleaner system would:
+
+- Define a protocol or base class for instrument profiles
+- Bundle each profile's geometry data in a dedicated subfolder under `data/`
+- Provide discovery (`list_profiles()`) and selection (`load_profile("lhd_cmos")`)
+- Document how to add a new instrument profile
+
+This is the most important structural addition. Every other extension (calibration,
+extraction) depends on clean multi-instrument support.
+
+**In scope for `echelle_optics`.**
+
+---
+
+## Multi-date geometry support
 
 **Status**: not started
 
-The most natural next layer. Given a set of arc-lamp line positions (measured in pixel
-coordinates from a real frame) and the theoretical wavelength of each line, fit a
-wavelength solution — typically a polynomial per order.
+Currently one calibration date is bundled per instrument. The architecture should
+support loading geometry by date or selecting the most recent calibration before a
+given observation timestamp.
 
-Planned scope:
+Planned:
+- Multiple `data/pattern_<instrument>_<date>.txt` files per instrument
+- `load_geometry(instrument, date=None)` — defaults to most recent
+- Geometry drift visualization between two calibration dates
 
-- Accept detected line centroids (x, order) from a real frame
-- Accept theoretical wavelengths from a line list
-- Fit a polynomial \(\lambda(x, m)\) per order
-- Return residuals and uncertainty estimates
-- Expose a `wavelength_at(x, order)` callable
-
-This module would import `EchelleSpectrometer` for initial guesses but would be
-independent of `geometry.py` and `synthetic.py`.
-
-**What NOT to do**: do not add line-fitting code to `spectrometer.py` or
-`synthetic.py`. Calibration is a separate concern.
+**In scope for `echelle_optics`.**
 
 ---
 
-## Detector + wavelength mapping
+## Wavelength calibration primitives
 
 **Status**: not started
 
-A combined mapping \((x, y) \rightarrow \lambda\) that uses both the order
-dispersion and the geometry traces. This is the full 2D pixel-to-wavelength solution.
+This package should provide the **data structures and mappings** for wavelength
+calibration — not the full arc-fitting pipeline. Concretely:
 
-Requires:
-- Wavelength calibration (per-order 1D solution)
-- Detector geometry (order trace y positions)
-- Interpolation between orders
+- `WavelengthSolution` — stores per-order polynomial \(\lambda(x)\), residuals,
+  fit uncertainty
+- `wavelength_at(x, order)` — evaluates the solution at a pixel position
+- `pixel_at(wavelength, order)` — inverse mapping
+- Support for global 2D solutions \(\lambda(x, y)\) interpolated across orders
 
-This mapping would be the key output consumed by extraction pipelines.
+The fitting of arc-lamp centroid positions to produce a `WavelengthSolution` is the
+responsibility of `echelle_spectra`. The data structures and evaluation methods live here.
 
----
-
-## Spectral extraction
-
-**Status**: not started, out of scope for this package
-
-Extracting a 1D spectrum from a 2D echellogram means:
-- Tracing the order center using geometry
-- Summing (or optimal-weighting) pixels across the order profile
-- Subtracting inter-order background
-
-This is a full pipeline step and should live in a separate package. It would
-consume `DetectorGeometry` for the trace and the wavelength solution for calibration.
+**In scope for `echelle_optics`.**
 
 ---
 
-## Synthetic lamp generation for extraction validation
-
-**Status**: partial (line renderer exists, extraction not yet available)
-
-The current synthetic renderer produces realistic images. Once an extraction pipeline
-exists, synthetic frames can validate it end-to-end:
-
-1. Generate a synthetic frame with known line positions and intensities
-2. Run extraction
-3. Compare extracted vs input wavelengths and intensities
-4. Quantify systematics from curvature, PSF shape, background
-
-This validation loop is a key intended use of `render_echelle_lines()`.
-
----
-
-## Calibration residual analysis
+## 2D pixel → wavelength mapping
 
 **Status**: not started
 
-After fitting a wavelength solution, visualizing residuals is important:
+The full mapping \((x, y) \rightarrow \lambda\) combines:
 
-- Residual map across the detector (2D)
+- Per-order wavelength solution from `WavelengthSolution`
+- Order trace positions from `DetectorGeometry`
+- Interpolation between orders for off-trace pixels
+
+This mapping is the key primitive consumed by extraction and calibration validation.
+
+**In scope for `echelle_optics`.**
+
+---
+
+## Synthetic extraction validation
+
+**Status**: partial (renderer exists; extraction not available)
+
+The intended validation loop:
+
+1. Generate a synthetic arc frame with known line positions, PSF, curvature, noise
+2. Pass to an extraction pipeline (in `echelle_spectra`)
+3. Fit a wavelength solution using the extracted line centroids
+4. Compare solution to ground truth
+5. Quantify systematics from curvature, PSF shape, background
+
+The synthetic renderer is already capable of step 1. Steps 2–5 require the extraction
+and calibration infrastructure.
+
+**Rendering stays in `echelle_optics`; extraction and fitting go in `echelle_spectra`.**
+
+---
+
+## Calibration residual utilities
+
+**Status**: not started
+
+After fitting a wavelength solution, standard diagnostics include:
+
+- 2D residual map across the detector
 - Per-order residual vs wavelength
-- Residual vs line intensity (blended lines)
-- Drift tracking across multiple calibration frames
+- Residual vs line brightness (blended lines, saturation)
+- Drift between two calibration epochs
 
-This would be a visualization/reporting utility consuming the calibration output.
+Lightweight plotting helpers for these diagnostics could live here alongside the
+`WavelengthSolution` structures.
+
+**In scope for `echelle_optics`.**
+
+---
+
+## Blaze efficiency model
+
+**Status**: deliberately excluded for now
+
+The Littrow approximation gives equal amplitude to all orders. A realistic blaze
+efficiency model would modulate intensities by wavelength distance from the blaze
+peak, which matters for:
+
+- Synthetic frame realism (relative line brightnesses)
+- Sensitivity calibration support
+
+This could be added as an optional amplitude weight in `render_echelle_lines()` without
+touching the existing interface.
+
+**In scope for `echelle_optics`** when needed.
 
 ---
 
 ## SpectroCube interoperability
 
-**Status**: not started
+**Status**: not started (depends on wavelength calibration)
 
-The [`spectrocube`](https://github.com/queezz/spectrocube) package defines a standard
-for calibrated spectroscopic datasets. Once wavelength calibration is available,
-`echelle_optics` should be able to produce `SpectroCube` objects from extracted,
-wavelength-calibrated spectra.
+Once `echelle_spectra` can produce calibrated extracted spectra, those results should be
+serialized as [SpectroCube](https://github.com/queezz/spectrocube) files:
 
-The output would be a `SpectroCube` with:
-- `intensity` array (wavelength dimension from the order extraction)
-- `wavelength` coordinate from the calibration solution
-- Required metadata: `instrument_id = "lhd_cmos_echelle"`, `calibration_type`, etc.
+- `intensity` — extracted 1D or 2D spectrum
+- `wavelength` — coordinate from the wavelength solution
+- Required metadata: `instrument_id`, `calibration_type`, `intensity_units`, etc.
 
-This connects `echelle_optics` to the broader analysis ecosystem.
+`echelle_optics` may provide helpers to construct the metadata block from an instrument
+profile. SpectroCube file I/O is handled by the `spectrocube` package.
 
----
-
-## Multi-calibration-date geometry
-
-**Status**: not started
-
-Currently only one calibration date is bundled (`20240305`). Future work could:
-
-- Store multiple pattern files with different dates
-- Track which pattern was current for a given observation date
-- Detect geometric drift between calibration dates
+**Metadata helpers may live here; file production belongs in `echelle_spectra`.**
 
 ---
 
-## Improved blaze efficiency model
+## What should NOT be added to this package
 
-**Status**: deliberately excluded for now
-
-The Littrow approximation gives equal intensity to all orders. A realistic blaze
-efficiency model would modulate line intensities by wavelength distance from the
-blaze peak. This is not needed for the current use cases (geometry and calibration
-support) but could be added as an optional amplitude weight in `render_echelle_lines()`.
-
----
-
-## What should NOT be added here
-
-- Full optical raytrace
-- Cross-disperser modeling
-- PSF from wavefront error
-- Multi-fiber or multi-slit support
-- Real-time instrument control
-
-These belong in dedicated instrument software, not in a geometry and calibration
-support toolkit.
+| Item | Where it belongs |
+|---|---|
+| Arc-line fitting against real detector frames | `echelle_spectra` |
+| Spectral extraction (order summing, background subtraction) | `echelle_spectra` |
+| Full reduction workflows | `echelle_spectra` |
+| GUI or interactive visualization | `spectroview` |
+| SpectroCube file read/write | `spectrocube` |
+| Full optical raytrace | Out of scope for this ecosystem |
+| Hardware / instrument control | Separate instrument software |

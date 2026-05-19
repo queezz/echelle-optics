@@ -4,9 +4,9 @@
 modeling. It covers diffraction physics, order tables, empirical detector geometry, and
 synthetic image generation.
 
-The primary target instrument is the **LHD CMOS echelle**: Newport 46.1 gr/mm grating
-(32° blaze), Andor Zyla 4.2 sCMOS detector (2560 × 2160 px, 6.5 µm pixel), 304.8 mm
-focal length.
+The package is designed for multiple instruments through an interchangeable profile
+system. **LHD CMOS** (Newport 46.1 gr/mm, Andor Zyla 4.2 sCMOS, 304.8 mm) is the
+first implemented profile.
 
 ---
 
@@ -31,16 +31,19 @@ This package intentionally does **not** contain:
 
 ## Design philosophy
 
-The repository keeps four concerns strictly separated:
+The repository keeps five concerns strictly separated:
 
 | Layer | What it models |
 |---|---|
 | **Spectral physics** | Grating equation, order wavelengths, dispersion |
-| **Detector geometry** | Empirical curved order positions on the chip |
-| **Synthetic rendering** | 2D image generation consuming both layers above |
-| **Wavelength calibration** | Not yet implemented — intentionally a separate layer |
+| **Detector geometry** | Empirical curved order positions — per instrument profile |
+| **Synthetic rendering** | 2D image generation consuming physics + geometry |
+| **Wavelength calibration primitives** | Pixel→wavelength mapping structures (planned) |
+| **Pipeline execution** | Arc fitting, extraction, SpectroCube production → `echelle_spectra` |
 
-See [Architecture](guide/architecture.md) for the module dependency diagram.
+See [Architecture](guide/architecture.md) for the module dependency diagram and
+[Ecosystem](development/ecosystem.md) for how this package relates to `echelle_spectra`,
+`spectrocube`, and `spectroview`.
 
 ---
 
@@ -52,5 +55,6 @@ See [Architecture](guide/architecture.md) for the module dependency diagram.
 - [Synthetic Images](guide/synthetic_images.md) — rendering emission lines and continua
 - [Architecture](guide/architecture.md) — module map and data flow
 - [Examples](examples/index.md) — annotated notebook walkthroughs
-- [Development / Agent Notes](development/agent_notes.md) — design rationale for contributors and future agents
+- [Agent Notes](development/agent_notes.md) — design rationale for contributors and future agents
+- [Ecosystem](development/ecosystem.md) — how this package relates to the rest of the stack
 - [API Reference](reference.md) — auto-generated from docstrings
