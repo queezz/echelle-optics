@@ -54,6 +54,9 @@ Issues = "https://github.com/queezz/echelle_optics/issues"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+echelle_optics = ["data/*.txt"]
+
 [tool.black]
 line-length = 100
 target-version = ["py310"]

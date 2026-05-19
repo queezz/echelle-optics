@@ -3,6 +3,20 @@
 Produces a 2-D numpy array (or RGB cube) that mimics what an echelle
 spectrometer detector would see for a given list of spectral lines.
 
+Architecture: physics vs. detector mapping
+-------------------------------------------
+The renderer separates two concerns:
+
+1. **Ideal spectral physics** — where a line *should* appear based on
+   the grating equation (order, dispersion, central wavelength).
+   This determines the x-position of each line.
+
+2. **Detector geometry / projection** — how the order traces map onto
+   the detector plane.  In the ideal case, orders are straight horizontal
+   lines.  In the real case (measured geometry), orders follow curved
+   traces caused by spectrograph optics, aberrations, and camera
+   distortion (commonly called "smile" or field curvature).
+
 Coordinate conventions
 ----------------------
 - x axis  →  dispersion direction  (detector columns)
@@ -10,35 +24,59 @@ Coordinate conventions
 - origin (0, 0) is the bottom-left corner when displayed with
   ``imshow(origin='lower')``.
 
-Order layout
-------------
-Each echelle order is placed at::
-
-    y_order = y_center + (order - reference_order) * order_spacing_px
-
-Higher orders (shorter wavelengths) appear at smaller y (towards the top)
-when order_spacing_px > 0.
-
-Wavelength-to-pixel mapping (dispersion axis)
----------------------------------------------
-For a line at wavelength λ in order m::
-
-    x_line = x_center + (λ - λ_center_m) / dispersion_m
-
-where λ_center_m and dispersion_m are computed from the spectrometer model.
+Geometry modes
+--------------
+- ``GeometryMode.IDEAL_STRAIGHT``: constant-y orders (legacy behaviour).
+- ``GeometryMode.MEASURED_LHD_CMOS``: empirical curved traces from
+  the LHD CMOS calibration pattern.
 """
 
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Optional, Sequence
 
 import numpy as np
 
 from .color import wavelength_to_rgb
+from .geometry import DetectorGeometry, GeometryMode, load_lhd_cmos_geometry
 from .grating import central_wavelength_nm, linear_dispersion_nm_per_px
 from .spectrometer import EchelleSpectrometer
 
 __all__ = ["render_echelle_lines", "render_white_light"]
+
+
+def _resolve_geometry(
+    geometry: Optional[DetectorGeometry | GeometryMode],
+) -> Optional[DetectorGeometry]:
+    """Resolve a geometry argument into a DetectorGeometry or None (ideal)."""
+    if geometry is None:
+        return None
+    if isinstance(geometry, DetectorGeometry):
+        return geometry
+    if isinstance(geometry, GeometryMode):
+        if geometry == GeometryMode.IDEAL_STRAIGHT:
+            return None
+        if geometry == GeometryMode.MEASURED_LHD_CMOS:
+            return load_lhd_cmos_geometry()
+    raise TypeError(f"Invalid geometry argument: {geometry!r}")
+
+
+def _order_y_position(
+    order: int,
+    x: float | np.ndarray,
+    yc: float,
+    ref_order: int,
+    order_spacing_px: float,
+    geometry: Optional[DetectorGeometry],
+) -> float | np.ndarray:
+    """Compute y position(s) for an order at given x position(s).
+
+    With geometry=None (ideal mode), returns a constant.
+    With a DetectorGeometry, evaluates the empirical trace.
+    """
+    if geometry is None:
+        return yc + (order - ref_order) * order_spacing_px
+    return geometry.y_at(order, x)
 
 
 def render_echelle_lines(
@@ -56,6 +94,7 @@ def render_echelle_lines(
     background: float = 0.0,
     read_noise: float = 0.0,
     seed: int | None = None,
+    geometry: Optional[DetectorGeometry | GeometryMode] = None,
 ) -> np.ndarray:
     """Render spectral lines onto a synthetic echelle detector frame.
 
@@ -75,11 +114,13 @@ def render_echelle_lines(
         is placed.  Defaults to ``width / 2``.
     y_center:
         Row (pixel) at which *reference_order* is placed.
-        Defaults to ``height / 2``.
+        Defaults to ``height / 2``.  Ignored when using measured geometry.
     reference_order:
         Order placed at *y_center*.  Defaults to the median of *orders*.
+        Ignored when using measured geometry.
     order_spacing_px:
         Vertical separation between adjacent orders in pixels.
+        Ignored when using measured geometry.
     psf_sigma_px:
         Gaussian PSF standard deviation along the **dispersion** axis (x) in
         pixels.  Also used for the cross-dispersion axis when
@@ -102,6 +143,11 @@ def render_echelle_lines(
         *intensity*).  Set to 0 to disable.
     seed:
         Random seed for reproducible noise.
+    geometry:
+        Detector geometry mode or instance.  ``None`` or
+        ``GeometryMode.IDEAL_STRAIGHT`` for constant-y orders;
+        ``GeometryMode.MEASURED_LHD_CMOS`` or a ``DetectorGeometry``
+        instance for empirical curved traces.
 
     Returns
     -------
@@ -117,6 +163,7 @@ def render_echelle_lines(
     yc = y_center if y_center is not None else h / 2.0
     ref_order = reference_order if reference_order is not None else int(np.median(orders))
 
+    geom = _resolve_geometry(geometry)
     rng = np.random.default_rng(seed)
 
     # Pre-compute per-order optical parameters
@@ -155,9 +202,10 @@ def render_echelle_lines(
             if disp == 0.0:
                 continue
 
-            # Pixel positions
+            # x position from spectral physics
             xp = xc + (lam_nm - lam_c) / disp
-            yp = yc + (m - ref_order) * order_spacing_px
+            # y position from detector geometry
+            yp = float(_order_y_position(m, xp, yc, ref_order, order_spacing_px, geom))
 
             # Integer centres; sub-pixel offset carried into Gaussian
             xi = int(round(xp))
@@ -212,19 +260,17 @@ def render_white_light(
     psf_sigma_y_px: float = 12.0,
     color: bool = True,
     background: float = 0.0,
+    geometry: Optional[DetectorGeometry | GeometryMode] = None,
 ) -> np.ndarray:
     """Render a white-light (continuum) frame showing the span of every order.
 
-    Each echelle order appears as a horizontal band filled with uniform
-    intensity (grayscale) or wavelength-dependent colour (colour mode).
-    The cross-dispersion profile is a Gaussian with width *psf_sigma_y_px*.
-    The dispersion axis is filled entirely — every detector column maps to
-    a wavelength via the grating equation, so the band width directly
-    reflects each order's wavelength coverage.
+    Each echelle order appears as a band filled with uniform intensity
+    (grayscale) or wavelength-dependent colour (colour mode).  The cross-
+    dispersion profile is a Gaussian with width *psf_sigma_y_px*, centered
+    on the order trace.
 
-    Unlike :func:`render_echelle_lines`, this function has no per-line
-    loop.  It vectorises over detector columns using numpy broadcasting,
-    so rendering the full 2160 × 2560 frame is fast.
+    When using measured geometry, the order trace varies with x (curved),
+    producing the characteristic "smile" pattern seen in real instruments.
 
     Parameters
     ----------
@@ -239,10 +285,13 @@ def render_white_light(
         Defaults to ``width / 2``.
     y_center:
         Row at which *reference_order* is placed.  Defaults to ``height / 2``.
+        Ignored when using measured geometry.
     reference_order:
         Order placed at *y_center*.  Defaults to the median of *orders*.
+        Ignored when using measured geometry.
     order_spacing_px:
         Cross-dispersion separation between adjacent orders in pixels.
+        Ignored when using measured geometry.
     psf_sigma_y_px:
         Gaussian cross-dispersion profile standard deviation in pixels.
     color:
@@ -251,6 +300,11 @@ def render_white_light(
         return a ``(H, W)`` float32 greyscale array.
     background:
         Uniform background level added to every pixel.
+    geometry:
+        Detector geometry mode or instance.  ``None`` or
+        ``GeometryMode.IDEAL_STRAIGHT`` for constant-y orders;
+        ``GeometryMode.MEASURED_LHD_CMOS`` or a ``DetectorGeometry``
+        instance for empirical curved traces.
 
     Returns
     -------
@@ -262,6 +316,8 @@ def render_white_light(
     xc = x_center if x_center is not None else w / 2.0
     yc = y_center if y_center is not None else h / 2.0
     ref_order = reference_order if reference_order is not None else int(np.median(orders))
+
+    geom = _resolve_geometry(geometry)
 
     if color:
         frame = np.full((h, w, 3), background, dtype=np.float32)
@@ -285,22 +341,27 @@ def render_white_light(
         if disp == 0.0:
             continue
 
-        # Cross-dispersion Gaussian profile — shape (h,)
-        y_order = yc + (m - ref_order) * order_spacing_px
-        gy = np.exp(-0.5 * ((y_idx - y_order) / psf_sigma_y_px) ** 2)
+        # Order trace y position: either constant or x-dependent
+        y_trace = _order_y_position(m, x_idx, yc, ref_order, order_spacing_px, geom)
+        y_trace = np.broadcast_to(
+            np.asarray(y_trace, dtype=np.float32), (w,)
+        ).copy()  # shape (w,)
 
-        # Wavelength at every detector column — shape (w,)
-        lam_at_x = lam_c + (x_idx - xc) * disp
+        # Cross-dispersion Gaussian: y_idx (h,) vs y_trace (w,) → (h, w)
+        # dy[row, col] = y_idx[row] - y_trace[col]
+        dy = y_idx[:, np.newaxis] - y_trace[np.newaxis, :]  # (h, w)
+        gy = np.exp(-0.5 * (dy / psf_sigma_y_px) ** 2)  # (h, w)
+
+        # Wavelength at every detector column
+        lam_at_x = lam_c + (x_idx - xc) * disp  # (w,)
 
         if color:
-            # RGB colour for each column — shape (w, 3)
             rgb_at_x = np.array(
                 [wavelength_to_rgb(float(l)) for l in lam_at_x], dtype=np.float32
-            )
-            # Outer product: gy (h,) × rgb_at_x (w, 3) → (h, w, 3)
-            frame += gy[:, np.newaxis, np.newaxis] * rgb_at_x[np.newaxis, :, :]
+            )  # (w, 3)
+            # gy (h, w) × rgb (w, 3) → (h, w, 3)
+            frame += gy[:, :, np.newaxis] * rgb_at_x[np.newaxis, :, :]
         else:
-            # Uniform intensity across the order — (h, 1) broadcasts over w
-            frame += gy[:, np.newaxis]
+            frame += gy
 
     return frame

@@ -70,12 +70,58 @@ plt.tight_layout()
 plt.show()
 ```
 
+### Detector geometry (order curvature)
+
+Real echelle spectrographs produce curved order traces on the detector due to
+camera optics aberrations and image-plane projection — commonly called "smile"
+or field curvature.  This is **not** a diffraction physics effect; it is purely
+a detector/image-plane geometry property.
+
+The package includes empirical order-center positions measured from the LHD CMOS
+echelle calibration lamp and can render synthetic images with realistic curvature:
+
+```python
+from echelle_optics import lhd_cmos_echelle, render_white_light, GeometryMode
+
+spec = lhd_cmos_echelle()
+orders = list(range(30, 59))
+
+# Render with measured curved detector geometry
+img = render_white_light(
+    spec, orders,
+    psf_sigma_y_px=12.0,
+    color=True,
+    geometry=GeometryMode.MEASURED_LHD_CMOS,
+)
+```
+
+Two geometry modes are available:
+- `GeometryMode.IDEAL_STRAIGHT` — constant-y orders (legacy / pedagogical)
+- `GeometryMode.MEASURED_LHD_CMOS` — empirical curved traces from calibration
+
+The geometry module also provides direct access to trace data and polynomial
+coefficients:
+
+```python
+from echelle_optics import load_lhd_cmos_geometry
+
+geom = load_lhd_cmos_geometry(poly_degree=2)
+trace = geom.trace_for_order(44)
+y_at_center = trace.y_at(1280.0)  # y position at detector center
+```
+
+See `examples/05_detector_geometry.ipynb` for detailed visualizations.
+
 ## Notes
 
 - The 13 µm pixel size mentioned in older notes refers to a different (CCD) detector
   and is not a supported instrument configuration.  It appears only as a numerical
   scaling sanity check in the test suite (`test_dispersion_scales_with_pixel_size`),
   confirming that dispersion is proportional to pixel size.
+
+- Order curvature is an empirical detector-space model derived from calibration data.
+  This is NOT a Zemax/raytracing simulation — it provides believable detector
+  geometry for pedagogical and development purposes.
 
 ## Docs
 

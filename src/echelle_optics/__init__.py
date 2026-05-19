@@ -1,6 +1,14 @@
 from ._version import __version__
 from .color import wavelength_to_rgb
 from .detector import Detector
+from .geometry import (
+    DetectorGeometry,
+    GeometryMode,
+    OrderTrace,
+    fit_order_traces,
+    load_lhd_cmos_geometry,
+    load_lhd_cmos_pattern,
+)
 from .grating import (
     central_wavelength_nm,
     free_spectral_range_nm,
@@ -23,6 +31,13 @@ __all__ = [
     "free_spectral_range_nm",
     # detector
     "Detector",
+    # geometry
+    "GeometryMode",
+    "OrderTrace",
+    "DetectorGeometry",
+    "load_lhd_cmos_pattern",
+    "fit_order_traces",
+    "load_lhd_cmos_geometry",
     # spectrometer
     "EchelleGrating",
     "EchelleSpectrometer",
