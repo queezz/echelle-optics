@@ -33,6 +33,9 @@ dev = [
   "mypy>=1.8.0",
   "ipython",
   "ipykernel",
+  "jupyter>=1.0",
+  "nbconvert>=7.0",
+  "nbformat>=5.9",
 ]
 docs = [
   "mkdocs>=1.6",
