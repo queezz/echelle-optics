@@ -539,6 +539,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/synthetic_images/" class="md-nav__link">
         
   
@@ -1072,6 +1100,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1305,19 +1361,20 @@ a cross-disperser introducing a quadratic distortion.</p>
 <h2 id="side-by-side-comparison">Side-by-side comparison<a class="headerlink" href="#side-by-side-comparison" title="Permanent link">¶</a></h2>
 <p>The notebook renders white-light images in both geometry modes and displays them
 side by side:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_white_light</span><span class="p">,</span> <span class="n">GeometryMode</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">render_white_light</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">img_ideal</span> <span class="o">=</span> <span class="n">render_white_light</span><span class="p">(</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">spec</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">img_curved</span> <span class="o">=</span> <span class="n">render_white_light</span><span class="p">(</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">spec</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">)</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">img_curved</span> <span class="o">=</span> <span class="n">render_white_light</span><span class="p">(</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="p">)</span>
 </code></pre></div>
 <p>In the ideal image, all orders appear as perfectly straight horizontal bands.
 In the curved image, the same orders follow their measured polynomial traces.

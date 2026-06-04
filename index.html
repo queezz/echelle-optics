@@ -617,6 +617,34 @@
   
   
     <li class="md-nav__item">
+      <a href="guide/empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="guide/synthetic_images/" class="md-nav__link">
         
   
@@ -1004,6 +1032,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1121,9 +1177,9 @@
 <p><strong>echelle_optics</strong> is a lightweight Python toolkit for cross-dispersed echelle spectrometer
 modeling. It covers diffraction physics, order tables, empirical detector geometry, and
 synthetic image generation.</p>
-<p>The primary target instrument is the <strong>LHD CMOS echelle</strong>: Newport 46.1 gr/mm grating
-(32° blaze), Andor Zyla 4.2 sCMOS detector (2560 × 2160 px, 6.5 µm pixel), 304.8 mm
-focal length.</p>
+<p>The package is designed for multiple instruments through an interchangeable profile
+system. <strong>LHD CMOS</strong> (Newport 46.1 gr/mm, Andor Zyla 4.2 sCMOS, 304.8 mm) is the
+first implemented profile.</p>
 <hr>
 <h2 id="package-scope">Package scope<a class="headerlink" href="#package-scope" title="Permanent link">¶</a></h2>
 <p>This package contains:</p>
@@ -1131,19 +1187,20 @@ focal length.</p>
 <li>Grating dispersion math (Littrow approximation, FSR, linear dispersion)</li>
 <li>Instrument model and per-order tables as pandas DataFrames</li>
 <li>Empirical curved order traces from real detector calibration data</li>
+<li>Empirical wavelength lookup-table primitives for pixel-to-wavelength mapping</li>
 <li>Synthetic 2D echellogram renderer (emission lines + white-light continuum)</li>
 <li>Wavelength-to-RGB helper for display</li>
 </ul>
 <p>This package intentionally does <strong>not</strong> contain:</p>
 <ul>
 <li>Full optical raytrace or Zemax-style simulation</li>
-<li>Wavelength calibration (fitting arc lines to pixel positions)</li>
+<li>Production wavelength-calibration execution against real lamp frames</li>
 <li>Spectral extraction from real frames</li>
 <li>Instrument control or data acquisition</li>
 </ul>
 <hr>
 <h2 id="design-philosophy">Design philosophy<a class="headerlink" href="#design-philosophy" title="Permanent link">¶</a></h2>
-<p>The repository keeps four concerns strictly separated:</p>
+<p>The repository keeps five concerns strictly separated:</p>
 <table>
 <thead>
 <tr>
@@ -1158,29 +1215,37 @@ focal length.</p>
 </tr>
 <tr>
 <td><strong>Detector geometry</strong></td>
-<td>Empirical curved order positions on the chip</td>
+<td>Empirical curved order positions — per instrument profile</td>
 </tr>
 <tr>
 <td><strong>Synthetic rendering</strong></td>
-<td>2D image generation consuming both layers above</td>
+<td>2D image generation consuming physics + geometry</td>
 </tr>
 <tr>
-<td><strong>Wavelength calibration</strong></td>
-<td>Not yet implemented — intentionally a separate layer</td>
+<td><strong>Wavelength calibration primitives</strong></td>
+<td>Pixel→wavelength lookup structures and residuals</td>
+</tr>
+<tr>
+<td><strong>Pipeline execution</strong></td>
+<td>Arc fitting, extraction, SpectroCube production → <code>echelle_spectra</code></td>
 </tr>
 </tbody>
 </table>
-<p>See <a href="guide/architecture/">Architecture</a> for the module dependency diagram.</p>
+<p>See <a href="guide/architecture/">Architecture</a> for the module dependency diagram and
+<a href="development/ecosystem/">Ecosystem</a> for how this package relates to <code>echelle_spectra</code>,
+<code>spectrocube</code>, and <code>spectroview</code>.</p>
 <hr>
 <h2 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">¶</a></h2>
 <ul>
 <li><a href="guide/getting_started/">Getting Started</a> — install, quickstart</li>
 <li><a href="guide/echelle_physics/">Echelle Physics</a> — grating equation and order tables</li>
 <li><a href="guide/detector_geometry/">Detector Geometry</a> — empirical curved order traces</li>
+<li><a href="guide/empirical_wavelengths/">Empirical Wavelengths</a> — lookup-table dispersion</li>
 <li><a href="guide/synthetic_images/">Synthetic Images</a> — rendering emission lines and continua</li>
 <li><a href="guide/architecture/">Architecture</a> — module map and data flow</li>
 <li><a href="examples/">Examples</a> — annotated notebook walkthroughs</li>
-<li><a href="development/agent_notes/">Development / Agent Notes</a> — design rationale for contributors and future agents</li>
+<li><a href="development/agent_notes/">Agent Notes</a> — design rationale for contributors and future agents</li>
+<li><a href="development/ecosystem/">Ecosystem</a> — how this package relates to the rest of the stack</li>
 <li><a href="reference/">API Reference</a> — auto-generated from docstrings</li>
 </ul>
 

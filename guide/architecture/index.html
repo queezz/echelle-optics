@@ -544,6 +544,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../synthetic_images/" class="md-nav__link">
         
   
@@ -692,6 +720,17 @@
     <span class="md-ellipsis">
       
         Layer 3 — Synthetic rendering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-4-wavelength-calibration-primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 4 — Wavelength calibration primitives
       
     </span>
   </a>
@@ -1094,6 +1133,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1221,6 +1288,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#layer-4-wavelength-calibration-primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 4 — Wavelength calibration primitives
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1297,14 +1375,15 @@ structural changes.</p>
 <hr>
 <h2 id="module-map">Module map<a class="headerlink" href="#module-map" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>echelle_optics/
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── grating.py        ← diffraction math (pure functions)
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── detector.py       ← pixel grid metadata (dataclass)
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├── spectrometer.py   ← instrument model + order table
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── grating.py        ← EchelleGrating dataclass + diffraction math
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── detector.py       ← Detector dataclass (pixel grid metadata)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├── spectrometer.py   ← EchelleSpectrometer, order table, instrument factories
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>├── geometry.py       ← empirical curved order traces
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├── synthetic.py      ← 2D image renderer
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>├── color.py          ← wavelength → RGB
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>└── data/
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    └── pattern_CMOS_20240305.txt   ← measured order positions
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    ├── pattern_CMOS_20240305.txt        ← measured order positions
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    └── Th_wavelength_CMOS_20240305.txt  ← measured wavelength lookup table
 </code></pre></div>
 <hr>
 <h2 id="dependency-graph">Dependency graph<a class="headerlink" href="#dependency-graph" title="Permanent link">¶</a></h2>
@@ -1314,9 +1393,12 @@ structural changes.</p>
         D[detector.py]
         S[spectrometer.py]
     end
-    subgraph geometry_layer["Detector geometry"]
+    subgraph geometry_layer["Detector geometry (per instrument)"]
         GEO[geometry.py]
-        PAT[(pattern_CMOS_20240305.txt)]
+        PAT[(data/pattern_*.txt)]
+    end
+    subgraph cal["Wavelength calibration primitives"]
+        WS[calibration.py]
     end
     subgraph render["Synthetic rendering"]
         COL[color.py]
@@ -1326,7 +1408,9 @@ structural changes.</p>
     G --&gt; S
     D --&gt; S
     S --&gt; SYN
+    S --&gt; WS
     GEO --&gt; SYN
+    GEO --&gt; WS
     PAT --&gt; GEO
     COL --&gt; SYN</code></pre>
 <hr>
@@ -1342,7 +1426,7 @@ structural changes.</p>
 <tbody>
 <tr>
 <td><code>grating.py</code></td>
-<td>Standalone functions: groove spacing, Littrow constant, central wavelength, dispersion, FSR</td>
+<td><code>EchelleGrating</code> dataclass + pure functions: groove spacing, Littrow constant, central wavelength, dispersion, FSR</td>
 </tr>
 <tr>
 <td><code>detector.py</code></td>
@@ -1350,12 +1434,13 @@ structural changes.</p>
 </tr>
 <tr>
 <td><code>spectrometer.py</code></td>
-<td><code>EchelleGrating</code>, <code>EchelleSpectrometer</code>, <code>order_table()</code>, <code>lhd_cmos_echelle()</code> factory</td>
+<td><code>EchelleSpectrometer</code>, <code>order_table()</code>, instrument factory functions (<code>lhd_cmos_echelle()</code>)</td>
 </tr>
 </tbody>
 </table>
-<p>These modules are <strong>independent of each other</strong> except that <code>EchelleSpectrometer</code> holds
-an <code>EchelleGrating</code> and a <code>Detector</code>. They have no dependency on geometry or rendering.</p>
+<p><code>grating.py</code> owns both the grating parameter container (<code>EchelleGrating</code>) and all
+grating math. <code>spectrometer.py</code> assembles grating + detector into a complete instrument
+model and generates order tables. These modules have no dependency on geometry or rendering.</p>
 <h3 id="layer-2-detector-geometry">Layer 2 — Detector geometry<a class="headerlink" href="#layer-2-detector-geometry" title="Permanent link">¶</a></h3>
 <table>
 <thead>
@@ -1398,23 +1483,42 @@ question: given an order index and an x pixel, what y pixel is the order center 
 </table>
 <p>The renderer imports from both Layer 1 and Layer 2 but does not modify either. It is
 the only place where x and y coordinates are combined.</p>
+<h3 id="layer-4-wavelength-calibration-primitives">Layer 4 — Wavelength calibration primitives<a class="headerlink" href="#layer-4-wavelength-calibration-primitives" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>calibration.py</code></td>
+<td><code>WavelengthSolution</code> data structure, <code>wavelength_at(x, order)</code>, <code>pixel_at(wavelength, order)</code>, residual containers</td>
+</tr>
+</tbody>
+</table>
+<p>This layer consumes both Layer 1 (dispersion for initial guesses) and Layer 2
+(geometry traces for 2D mapping). It provides the data structures that synthetic
+rendering and extraction pipelines can consume. Fitting or correcting arc-line
+centroids from real detector frames is the responsibility of <code>echelle_spectra</code>.</p>
 <hr>
 <h2 id="key-design-boundaries">Key design boundaries<a class="headerlink" href="#key-design-boundaries" title="Permanent link">¶</a></h2>
-<p><strong>Do not merge the geometry layer into the spectrometer model.</strong></p>
-<p><code>EchelleSpectrometer</code> knows about wavelengths and dispersions. It does not know about
-detector pixel positions. This separation exists because:</p>
-<ol>
-<li>The geometry is instrument-specific and empirical — it would pollute a general
-   grating model.</li>
-<li>The geometry may be replaced (different calibration date, different instrument)
-   without touching the physics model.</li>
-<li>Future wavelength calibration code will also need to consume geometry independently
-   of the grating model.</li>
-</ol>
-<p><strong>Do not compute curvature from grating theory inside the renderer.</strong></p>
-<p>Curvature is measured, not derived. The <code>IDEAL_STRAIGHT</code> mode exists for testing, not
-as a physical default. Never silently fall back to straight orders when curved geometry
-is available.</p>
+<p><strong>Physics and geometry are independent.</strong></p>
+<p><code>EchelleSpectrometer</code> knows about wavelengths and dispersions. <code>DetectorGeometry</code> knows
+about pixel y-positions. Neither knows about the other. This separation means:</p>
+<ul>
+<li>Geometry can change (new calibration date, different instrument) without touching physics</li>
+<li>New instruments reuse the same physics layer with different geometry data</li>
+<li>Wavelength calibration code can consume both layers without coupling them</li>
+</ul>
+<p><strong>Geometry is empirical, not derived.</strong></p>
+<p>Order curvature is measured from real calibration frames, not computed from optics.
+<code>IDEAL_STRAIGHT</code> mode is for tests only — never use it as a production default.</p>
+<p><strong>Calibration primitives belong here; pipelines belong in <code>echelle_spectra</code>.</strong></p>
+<p><code>echelle_optics</code> provides the data structures (<code>WavelengthSolution</code>) and evaluation
+methods (<code>wavelength_at()</code>). <code>echelle_spectra</code> populates those structures by fitting
+arc-lamp observations. The boundary is: data model here, execution there.</p>
 <hr>
 <h2 id="data-flow-emission-line-rendering">Data flow: emission-line rendering<a class="headerlink" href="#data-flow-emission-line-rendering" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>lines (wavelengths, nm)
@@ -1423,16 +1527,17 @@ is available.</p>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>physical_order_from_wavelength()          ← grating.py
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        │
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        ▼
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>wavelength → x pixel                      ← dispersion from spectrometer.py
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        │
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        ▼
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>(order, x) → y pixel                      ← geometry.py or ideal spacing
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        │
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        ▼
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>place Gaussian PSF at (x, y)              ← synthetic.py
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        │
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        ▼
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>2D float array  (H × W)
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>wavelength → x pixel                      ← calibration.py when provided,
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                                             otherwise spectrometer.py
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        │
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        ▼
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>(order, x) → y pixel                      ← geometry.py or ideal spacing
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        │
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        ▼
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>place Gaussian PSF at (x, y)              ← synthetic.py
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        │
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>        ▼
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>2D float array  (H × W)
 </code></pre></div>
 <hr>
 <h2 id="public-api-surface">Public API surface<a class="headerlink" href="#public-api-surface" title="Permanent link">¶</a></h2>
@@ -1441,53 +1546,63 @@ is available.</p>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="c1"># Instrument factory</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">lhd_cmos_echelle</span><span class="p">,</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="c1"># Grating math</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">groove_spacing_nm</span><span class="p">,</span> <span class="n">littrow_constant_nm</span><span class="p">,</span> <span class="n">central_wavelength_nm</span><span class="p">,</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">physical_order_from_wavelength</span><span class="p">,</span> <span class="n">linear_dispersion_nm_per_px</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">free_spectral_range_nm</span><span class="p">,</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="c1"># Detector</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">Detector</span><span class="p">,</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="c1"># Spectrometer</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="n">EchelleGrating</span><span class="p">,</span> <span class="n">EchelleSpectrometer</span><span class="p">,</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="c1"># Geometry</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">OrderTrace</span><span class="p">,</span> <span class="n">DetectorGeometry</span><span class="p">,</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">load_lhd_cmos_geometry</span><span class="p">,</span> <span class="n">load_lhd_cmos_pattern</span><span class="p">,</span> <span class="n">fit_order_traces</span><span class="p">,</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="c1"># Rendering</span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="n">render_echelle_lines</span><span class="p">,</span> <span class="n">render_white_light</span><span class="p">,</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="c1"># Color</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="n">wavelength_to_rgb</span><span class="p">,</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="c1"># Grating (parameter container + math — all in grating.py)</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">EchelleGrating</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">groove_spacing_nm</span><span class="p">,</span> <span class="n">littrow_constant_nm</span><span class="p">,</span> <span class="n">central_wavelength_nm</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">physical_order_from_wavelength</span><span class="p">,</span> <span class="n">linear_dispersion_nm_per_px</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">free_spectral_range_nm</span><span class="p">,</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="c1"># Detector</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">Detector</span><span class="p">,</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="c1"># Spectrometer (instrument assembly + order table)</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="n">EchelleSpectrometer</span><span class="p">,</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="c1"># Geometry</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">OrderTrace</span><span class="p">,</span> <span class="n">DetectorGeometry</span><span class="p">,</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="n">load_lhd_cmos_geometry</span><span class="p">,</span> <span class="n">load_lhd_cmos_pattern</span><span class="p">,</span> <span class="n">fit_order_traces</span><span class="p">,</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="c1"># Wavelength calibration primitives</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>    <span class="n">CalibrationLine</span><span class="p">,</span> <span class="n">OrderWavelengthFit</span><span class="p">,</span> <span class="n">WavelengthSolution</span><span class="p">,</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="n">load_lhd_cmos_calibration</span><span class="p">,</span> <span class="n">fit_wavelength_solution</span><span class="p">,</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="n">load_lhd_cmos_wavelength_solution</span><span class="p">,</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="c1"># Rendering</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>    <span class="n">render_echelle_lines</span><span class="p">,</span> <span class="n">render_white_light</span><span class="p">,</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>    <span class="c1"># Color</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>    <span class="n">wavelength_to_rgb</span><span class="p">,</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="p">)</span>
 </code></pre></div>
 <hr>
 <h2 id="what-is-not-in-this-package">What is not in this package<a class="headerlink" href="#what-is-not-in-this-package" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
-<th>Missing piece</th>
-<th>Reason</th>
+<th>Item</th>
+<th>Where it belongs</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Wavelength calibration</td>
-<td>Fitting arc lines to pixel coordinates — planned as a separate module or package</td>
+<td>Arc-line fitting against real detector frames</td>
+<td><code>echelle_spectra</code></td>
 </tr>
 <tr>
-<td>Spectral extraction</td>
-<td>Summing counts along a curved order trace — out of scope</td>
+<td>Full spectral extraction pipelines</td>
+<td><code>echelle_spectra</code></td>
+</tr>
+<tr>
+<td>SpectroCube file production</td>
+<td><code>echelle_spectra</code> (using <code>spectrocube</code>)</td>
+</tr>
+<tr>
+<td>GUI visualization</td>
+<td><code>spectroview</code></td>
 </tr>
 <tr>
 <td>Full optical raytrace</td>
-<td>This is not Zemax; physics is Littrow approximation only</td>
-</tr>
-<tr>
-<td>Multi-instrument config</td>
-<td>Only LHD CMOS bundled; extension is by user code</td>
+<td>Out of scope — physics is Littrow approximation only</td>
 </tr>
 <tr>
 <td>Flux / throughput model</td>
@@ -1495,6 +1610,8 @@ is available.</p>
 </tr>
 </tbody>
 </table>
+<p>See <a href="../../development/ecosystem/">Ecosystem</a> for the full picture of how the packages
+relate to each other.</p>
 
 
 

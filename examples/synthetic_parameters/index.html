@@ -539,6 +539,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/synthetic_images/" class="md-nav__link">
         
   
@@ -1066,6 +1094,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1253,11 +1309,11 @@ match a real detector frame.</p>
 </code></pre></div>
 <hr>
 <h2 id="psf-sigma-spectral-direction">PSF sigma (spectral direction)<a class="headerlink" href="#psf-sigma-spectral-direction" title="Permanent link">¶</a></h2>
-<p><code>psf_sigma_x_px</code> controls the width of each line in the dispersion direction.</p>
+<p><code>psf_sigma_px</code> controls the width of each line in the dispersion direction.</p>
 <p>Typical values: 1–4 px. Smaller values give sharper lines; larger values approximate
 lower spectral resolution or defocus.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">for</span> <span class="n">sigma_x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">]:</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">psf_sigma_x_px</span><span class="o">=</span><span class="n">sigma_x</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="n">psf_sigma_px</span><span class="o">=</span><span class="n">sigma_x</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </code></pre></div>
 <hr>
 <h2 id="psf-sigma-spatialslit-direction">PSF sigma (spatial/slit direction)<a class="headerlink" href="#psf-sigma-spatialslit-direction" title="Permanent link">¶</a></h2>
@@ -1265,7 +1321,7 @@ lower spectral resolution or defocus.</p>
 This models the slit image height.</p>
 <p>Typical values: 5–20 px. The default of 12 px corresponds to a ~80 µm slit.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">for</span> <span class="n">sigma_y</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">]:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="n">sigma_y</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="n">sigma_y</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </code></pre></div>
 <hr>
 <h2 id="order-spacing">Order spacing<a class="headerlink" href="#order-spacing" title="Permanent link">¶</a></h2>
@@ -1274,28 +1330,28 @@ This models the slit image height.</p>
 <p>Typical value for the LHD CMOS: 65 px (orders 30–58 span ~1885 px of the 2160 px
 detector height).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">for</span> <span class="n">spacing</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">45</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">75</span><span class="p">]:</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">order_spacing_px</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="n">order_spacing_px</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </code></pre></div>
 <hr>
 <h2 id="background-level">Background level<a class="headerlink" href="#background-level" title="Permanent link">¶</a></h2>
 <p><code>background</code> adds a constant offset to the entire image in ADU. Models sky background,
 thermal dark current, or a bright plasma continuum.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">for</span> <span class="n">bg</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">]:</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="n">background</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </code></pre></div>
 <hr>
 <h2 id="read-noise">Read noise<a class="headerlink" href="#read-noise" title="Permanent link">¶</a></h2>
-<p><code>read_noise_sigma</code> adds Gaussian noise with the given standard deviation. Models
+<p><code>read_noise</code> adds Gaussian noise with the given standard deviation. Models
 detector read noise.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">for</span> <span class="n">noise</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">]:</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">read_noise_sigma</span><span class="o">=</span><span class="n">noise</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="n">read_noise</span><span class="o">=</span><span class="n">noise</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </code></pre></div>
 <hr>
 <h2 id="color-mode">Color mode<a class="headerlink" href="#color-mode" title="Permanent link">¶</a></h2>
 <p>Passing <code>color=True</code> returns an <code>(H, W, 3)</code> RGB array instead of <code>(H, W)</code> grayscale.
 Each line is colored by its wavelength using <code>wavelength_to_rgb()</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">img_gray</span>  <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>   <span class="c1"># (2160, 2560)</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">img_color</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>    <span class="c1"># (2160, 2560, 3)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">img_gray</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">img_color</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <hr>
 <h2 id="matching-a-real-frame">Matching a real frame<a class="headerlink" href="#matching-a-real-frame" title="Permanent link">¶</a></h2>
@@ -1303,7 +1359,7 @@ Each line is colored by its wavelength using <code>wavelength_to_rgb()</code>.</
 <ol>
 <li>Display the real frame with the same percentile stretch</li>
 <li>Identify isolated bright lines and measure their pixel width (x) and height (y)</li>
-<li>Set <code>psf_sigma_x_px</code> to ~half the FWHM in x (FWHM ≈ 2.35 σ)</li>
+<li>Set <code>psf_sigma_px</code> to ~half the FWHM in x (FWHM ≈ 2.35 σ)</li>
 <li>Set <code>psf_sigma_y_px</code> similarly for y</li>
 <li>Measure the inter-order spacing from the real frame and set <code>order_spacing_px</code></li>
 <li>Use <code>GeometryMode.MEASURED_LHD_CMOS</code> to match the curvature</li>

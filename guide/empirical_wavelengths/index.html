@@ -8,10 +8,10 @@
       
       
       
-        <link rel="prev" href="../echelle_physics/">
+        <link rel="prev" href="../detector_geometry/">
       
       
-        <link rel="next" href="../empirical_wavelengths/">
+        <link rel="next" href="../synthetic_images/">
       
       
         
@@ -22,7 +22,7 @@
     
     
       
-        <title>Detector Geometry - echelle-optics</title>
+        <title>Empirical Wavelengths - echelle-optics</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#detector-geometry" class="md-skip">
+        <a href="#empirical-wavelength-solutions" class="md-skip">
           Skip to content
         </a>
       
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Detector Geometry
+              Empirical Wavelengths
             
           </span>
         </div>
@@ -513,6 +513,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../detector_geometry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detector Geometry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -532,7 +560,7 @@
   <span class="md-ellipsis">
     
   
-    Detector Geometry
+    Empirical Wavelengths
   
 
     
@@ -550,7 +578,7 @@
   <span class="md-ellipsis">
     
   
-    Detector Geometry
+    Empirical Wavelengths
   
 
     
@@ -576,10 +604,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#why-orders-curve" class="md-nav__link">
+  <a href="#what-is-bundled" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why orders curve
+        What is bundled
       
     </span>
   </a>
@@ -587,10 +615,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-calibration-pattern-file" class="md-nav__link">
+  <a href="#loading-the-solution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The calibration pattern file
+        Loading the solution
       
     </span>
   </a>
@@ -598,10 +626,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#geometrymode" class="md-nav__link">
+  <a href="#rendering-with-empirical-dispersion" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GeometryMode
+        Rendering with empirical dispersion
       
     </span>
   </a>
@@ -609,54 +637,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#polynomial-fits-to-order-traces" class="md-nav__link">
+  <a href="#boundary-with-echelle_spectra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Polynomial fits to order traces
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#curvature-magnitude" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Curvature magnitude
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#detectorgeometry-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DetectorGeometry API
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#relationship-to-the-rest-of-the-package" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Relationship to the rest of the package
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#replacing-the-geometry-for-a-different-instrument" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Replacing the geometry for a different instrument
+        Boundary with echelle_spectra
       
     </span>
   </a>
@@ -667,34 +651,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../empirical_wavelengths/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Empirical Wavelengths
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1183,10 +1139,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#why-orders-curve" class="md-nav__link">
+  <a href="#what-is-bundled" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why orders curve
+        What is bundled
       
     </span>
   </a>
@@ -1194,10 +1150,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-calibration-pattern-file" class="md-nav__link">
+  <a href="#loading-the-solution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The calibration pattern file
+        Loading the solution
       
     </span>
   </a>
@@ -1205,10 +1161,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#geometrymode" class="md-nav__link">
+  <a href="#rendering-with-empirical-dispersion" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GeometryMode
+        Rendering with empirical dispersion
       
     </span>
   </a>
@@ -1216,54 +1172,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#polynomial-fits-to-order-traces" class="md-nav__link">
+  <a href="#boundary-with-echelle_spectra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Polynomial fits to order traces
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#curvature-magnitude" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Curvature magnitude
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#detectorgeometry-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DetectorGeometry API
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#relationship-to-the-rest-of-the-package" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Relationship to the rest of the package
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#replacing-the-geometry-for-a-different-instrument" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Replacing the geometry for a different instrument
+        Boundary with echelle_spectra
       
     </span>
   </a>
@@ -1290,119 +1202,97 @@
   
 
 
-<h1 id="detector-geometry">Detector Geometry<a class="headerlink" href="#detector-geometry" title="Permanent link">¶</a></h1>
-<p>This page explains how order positions on the detector are handled in the package,
-and why the approach is empirical rather than derived from optics.</p>
+<h1 id="empirical-wavelength-solutions">Empirical Wavelength Solutions<a class="headerlink" href="#empirical-wavelength-solutions" title="Permanent link">¶</a></h1>
+<p><code>echelle_optics</code> can use the measured LHD CMOS wavelength lookup table as the
+dispersion rule for synthetic images. This is separate from the grating equation:
+the grating model remains useful for intuition and rough guesses, while the
+empirical solution reflects the observed detector calibration.</p>
 <hr>
-<h2 id="why-orders-curve">Why orders curve<a class="headerlink" href="#why-orders-curve" title="Permanent link">¶</a></h2>
-<p>In an ideal echelle with perfect on-axis geometry, diffraction orders appear as
-<strong>straight horizontal stripes</strong> on the detector. In practice, real instruments produce
-<strong>curved orders</strong> — a phenomenon sometimes called "smile" or "order curvature".</p>
-<p>Curvature arises from a combination of:</p>
-<ul>
-<li>The cross-disperser introducing oblique illumination</li>
-<li>Anamorphic effects and off-axis aberrations in the camera optics</li>
-<li>Physical tilt of the detector relative to the focal plane</li>
-</ul>
-<p>For the LHD CMOS echelle, the curvature is <strong>measurable and reproducible</strong>. It is
-characterized empirically from calibration exposures (typically a white-light flat or
-arc lamp image) rather than computed from a raytrace.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The package does not attempt to model smile from first principles. The curvature
-data bundled in <code>data/pattern_CMOS_20240305.txt</code> was measured on the actual
-instrument on 2024-03-05.</p>
-</div>
-<hr>
-<h2 id="the-calibration-pattern-file">The calibration pattern file<a class="headerlink" href="#the-calibration-pattern-file" title="Permanent link">¶</a></h2>
-<p>The file <code>src/echelle_optics/data/pattern_CMOS_20240305.txt</code> contains the measured
-center-of-order y-positions across the detector:</p>
-<ul>
-<li>Shape: 2560 rows × 29 columns</li>
-<li>Rows: x pixel coordinate (0 … 2559)</li>
-<li>Columns: diffraction orders 30 … 58</li>
-<li>Values: integer y pixel of the order center at that x position</li>
-</ul>
-<p>This table is the ground truth for the LHD CMOS detector geometry. It was extracted
-from a real calibration frame.</p>
-<hr>
-<h2 id="geometrymode">GeometryMode<a class="headerlink" href="#geometrymode" title="Permanent link">¶</a></h2>
-<p>The package exposes two geometry modes via the <code>GeometryMode</code> enum:</p>
+<h2 id="what-is-bundled">What is bundled<a class="headerlink" href="#what-is-bundled" title="Permanent link">¶</a></h2>
+<p>The LHD CMOS profile includes:</p>
 <table>
 <thead>
 <tr>
-<th>Mode</th>
-<th>Behavior</th>
+<th>File</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>IDEAL_STRAIGHT</code></td>
-<td>Orders are placed at evenly-spaced constant y positions. No curvature.</td>
+<td><code>data/pattern_CMOS_20240305.txt</code></td>
+<td>Measured order-center y positions</td>
 </tr>
 <tr>
-<td><code>MEASURED_LHD_CMOS</code></td>
-<td>Order y-positions are loaded from the calibration pattern file and fit with polynomials.</td>
+<td><code>data/Th_wavelength_CMOS_20240305.txt</code></td>
+<td>Curated lamp-line table: order, pixel interval, fitted center, wavelength, species</td>
 </tr>
 </tbody>
 </table>
-<p><code>IDEAL_STRAIGHT</code> is useful for testing, parameter sweeps, and understanding the
-dispersion model in isolation. <code>MEASURED_LHD_CMOS</code> produces realistic detector images.</p>
-<hr>
-<h2 id="polynomial-fits-to-order-traces">Polynomial fits to order traces<a class="headerlink" href="#polynomial-fits-to-order-traces" title="Permanent link">¶</a></h2>
-<p>Loading the raw integer y-positions directly would be noisy. Instead, the package fits
-a <strong>quadratic polynomial</strong> to each order trace using <code>numpy.polyfit</code> on normalized
-x-coordinates <span class="arithmatex">\( x' \in [-1, 1] \)</span>:</p>
-<div class="arithmatex">\[
-y(x') = c_0 + c_1 x' + c_2 x'^2
-\]</div>
-<p>The <code>OrderTrace</code> object stores the coefficients and provides a <code>y_at(x)</code> method.
-Residuals are typically sub-pixel.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_lhd_cmos_geometry</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">geo</span> <span class="o">=</span> <span class="n">load_lhd_cmos_geometry</span><span class="p">()</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># y position of order 46 at x=1280 (detector center)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">y</span> <span class="o">=</span> <span class="n">geo</span><span class="o">.</span><span class="n">y_at</span><span class="p">(</span><span class="mi">46</span><span class="p">,</span> <span class="mi">1280</span><span class="p">)</span>
+<p>The wavelength table uses 0-based order labels from the historical
+<code>echelle_spectra</code> workflow. <code>echelle_optics</code> maps those labels to physical
+diffraction orders with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">physical_order</span> <span class="o">=</span> <span class="n">order_idx</span> <span class="o">+</span> <span class="mi">30</span>
 </code></pre></div>
 <hr>
-<h2 id="curvature-magnitude">Curvature magnitude<a class="headerlink" href="#curvature-magnitude" title="Permanent link">¶</a></h2>
-<p>The curvature is small but not negligible. Across the full detector width (2560 px),
-the center-to-edge vertical displacement is typically <strong>5–15 pixels</strong>, depending on
-the order. This is significant relative to the order width and matters for:</p>
-<ul>
-<li>Synthetic image realism</li>
-<li>Spectral extraction (must trace the curved order)</li>
-<li>Wavelength calibration (arc line positions shift with y)</li>
-</ul>
-<hr>
-<h2 id="detectorgeometry-api">DetectorGeometry API<a class="headerlink" href="#detectorgeometry-api" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_lhd_cmos_geometry</span><span class="p">,</span> <span class="n">GeometryMode</span>
+<h2 id="loading-the-solution">Loading the solution<a class="headerlink" href="#loading-the-solution" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_lhd_cmos_wavelength_solution</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">geo</span> <span class="o">=</span> <span class="n">load_lhd_cmos_geometry</span><span class="p">()</span>          <span class="c1"># loads pattern, fits polynomials</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">trace</span> <span class="o">=</span> <span class="n">geo</span><span class="o">.</span><span class="n">trace_for_order</span><span class="p">(</span><span class="mi">46</span><span class="p">)</span>         <span class="c1"># OrderTrace for order 46</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">y_center</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">y_at</span><span class="p">(</span><span class="mi">1280</span><span class="p">)</span>             <span class="c1"># y at x=1280</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">coeffs</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">coefficients</span>             <span class="c1"># [c0, c1, c2]</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">residuals</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">residuals</span>             <span class="c1"># array of fit residuals</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">solution</span> <span class="o">=</span> <span class="n">load_lhd_cmos_wavelength_solution</span><span class="p">(</span><span class="n">poly_degree</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </code></pre></div>
-<hr>
-<h2 id="relationship-to-the-rest-of-the-package">Relationship to the rest of the package<a class="headerlink" href="#relationship-to-the-rest-of-the-package" title="Permanent link">¶</a></h2>
-<p>The geometry layer is <strong>independent of spectral physics</strong>. It only answers: "at x pixel
-<span class="arithmatex">\(p\)</span>, what y pixel does order <span class="arithmatex">\(m\)</span> lie on?"</p>
-<p>The synthetic renderer (<code>synthetic.py</code>) consumes both:</p>
+<p>The returned <code>WavelengthSolution</code> stores one fitted <code>OrderWavelengthFit</code> per order.
+Each fit exposes:</p>
 <ul>
-<li>x-positions from grating dispersion (wavelength → x pixel)</li>
-<li>y-positions from detector geometry (order + x → y pixel)</li>
+<li><code>wavelength_at(x, order)</code> — evaluate wavelength at detector x pixel</li>
+<li><code>pixel_at(wavelength_nm, order)</code> — invert the fit to predict x pixel</li>
+<li>per-order residual diagnostics through <code>rms_nm</code> and <code>residuals_nm</code></li>
 </ul>
-<p>These two inputs are kept separate by design. Mixing them would make the architecture
-harder to extend when real wavelength calibration is added.</p>
-<p>See <a href="../architecture/">Architecture</a> for the full data-flow diagram.</p>
 <hr>
-<h2 id="replacing-the-geometry-for-a-different-instrument">Replacing the geometry for a different instrument<a class="headerlink" href="#replacing-the-geometry-for-a-different-instrument" title="Permanent link">¶</a></h2>
-<p>To use the package with a different echelle instrument, implement a new
-<code>DetectorGeometry</code> by providing your own calibration pattern and calling
-<code>fit_order_traces()</code>. The <code>synthetic.py</code> renderer accepts any <code>DetectorGeometry</code>
-object, so no changes to the rendering code are needed.</p>
+<h2 id="rendering-with-empirical-dispersion">Rendering with empirical dispersion<a class="headerlink" href="#rendering-with-empirical-dispersion" title="Permanent link">¶</a></h2>
+<p>Pass the solution into the synthetic renderer:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">GeometryMode</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">lhd_cmos_echelle</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">load_lhd_cmos_wavelength_solution</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">render_echelle_lines</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">spec</span> <span class="o">=</span> <span class="n">lhd_cmos_echelle</span><span class="p">()</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">solution</span> <span class="o">=</span> <span class="n">load_lhd_cmos_wavelength_solution</span><span class="p">()</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="p">(</span><span class="mf">650.65281</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># Ne I</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="p">(</span><span class="mf">653.28822</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># Ne I</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="p">(</span><span class="mf">656.27900</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># H-alpha</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">]</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">lines</span><span class="p">,</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="n">orders</span><span class="o">=</span><span class="n">solution</span><span class="o">.</span><span class="n">order_list</span><span class="p">(),</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>    <span class="n">wavelength_solution</span><span class="o">=</span><span class="n">solution</span><span class="p">,</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="n">psf_sigma_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="p">)</span>
+</code></pre></div>
+<p>When <code>wavelength_solution</code> covers an order, the renderer uses <code>pixel_at()</code> for line
+positions and <code>wavelength_at()</code> for white-light color. If a wavelength is outside the
+empirical range for an order, rendering falls back to the theoretical Littrow
+dispersion for that line.</p>
+<hr>
+<h2 id="boundary-with-echelle_spectra">Boundary with echelle_spectra<a class="headerlink" href="#boundary-with-echelle_spectra" title="Permanent link">¶</a></h2>
+<p><code>echelle_optics</code> owns the lookup-table data structure and evaluation methods. It does
+not fit real lamp frames. The execution workflow belongs in <code>echelle_spectra</code>:</p>
+<ol>
+<li>Load a real lamp frame.</li>
+<li>Extract order spectra using the measured pattern.</li>
+<li>Fit line centroids.</li>
+<li>Select high-quality lines.</li>
+<li>Fit a correction or produce a new lookup table.</li>
+</ol>
+<p>That corrected table can then be loaded by <code>echelle_optics</code> as another empirical
+solution for validation or synthetic-frame generation.</p>
 
 
 

@@ -707,6 +707,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../synthetic_images/" class="md-nav__link">
         
   
@@ -1094,6 +1122,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1370,18 +1426,18 @@ instrument: 46.1 gr/mm, 32° blaze, 304.8 mm focal length, 2560 × 2160 @ 6.5 µ
 </tbody>
 </table>
 <h3 id="render-a-synthetic-emission-line-image">Render a synthetic emission-line image<a class="headerlink" href="#render-a-synthetic-emission-line-image" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_echelle_lines</span><span class="p">,</span> <span class="n">GeometryMode</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">render_echelle_lines</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Hg/Ar calibration lines (nm)</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="mf">404.66</span><span class="p">,</span> <span class="mf">435.83</span><span class="p">,</span> <span class="mf">546.07</span><span class="p">,</span> <span class="mf">579.07</span><span class="p">,</span> <span class="mf">696.54</span><span class="p">,</span> <span class="mf">706.72</span><span class="p">,</span> <span class="mf">750.39</span><span class="p">,</span> <span class="mf">763.51</span><span class="p">]</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">lines</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">404.66</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">435.83</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">546.07</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">579.07</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">spec</span><span class="p">,</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">lines</span><span class="p">,</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">psf_sigma_x_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">lines</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">psf_sigma_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
 <a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="p">)</span>
 </code></pre></div>
 <p><code>img</code> is a 2560 × 2160 float array. Use matplotlib to display it:</p>
@@ -1425,6 +1481,10 @@ instrument: 46.1 gr/mm, 32° blaze, 304.8 mm focal length, 2560 × 2160 @ 6.5 µ
 <tr>
 <td><code>05_detector_geometry.ipynb</code></td>
 <td>Empirical curved order geometry</td>
+</tr>
+<tr>
+<td><code>06_wavelength_calibration.ipynb</code></td>
+<td>Empirical wavelength lookup-table dispersion</td>
 </tr>
 </tbody>
 </table>

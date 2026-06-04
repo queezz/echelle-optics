@@ -539,6 +539,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/synthetic_images/" class="md-nav__link">
         
   
@@ -1033,6 +1061,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1262,14 +1318,14 @@ order 58 covers ~17 nm per detector width.</p>
 in wavelength space.</p>
 <hr>
 <h2 id="white-light-overview">White-light overview<a class="headerlink" href="#white-light-overview" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_white_light</span><span class="p">,</span> <span class="n">GeometryMode</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">render_white_light</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_white_light</span><span class="p">(</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">spec</span><span class="p">,</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">order_min</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">order_max</span><span class="o">=</span><span class="mi">58</span><span class="p">,</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">order_width_px</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">)</span>
 </code></pre></div>
 <p>This produces an RGB image where each order appears as a horizontal stripe colored

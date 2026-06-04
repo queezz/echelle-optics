@@ -8,7 +8,7 @@
       
       
       
-        <link rel="prev" href="../detector_geometry/">
+        <link rel="prev" href="../empirical_wavelengths/">
       
       
         <link rel="next" href="../architecture/">
@@ -541,6 +541,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -687,6 +715,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#empirical-wavelength-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Empirical wavelength rendering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#white-light-renderer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -697,17 +736,6 @@
   
     <nav class="md-nav" aria-label="White-light renderer">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#how-it-works_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How it works
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#example_1" class="md-nav__link">
@@ -1133,6 +1161,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1277,6 +1333,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#empirical-wavelength-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Empirical wavelength rendering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#white-light-renderer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1287,17 +1354,6 @@
   
     <nav class="md-nav" aria-label="White-light renderer">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#how-it-works_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How it works
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#example_1" class="md-nav__link">
@@ -1374,15 +1430,16 @@
 <li><strong>Emission-line images</strong> — discrete spectral lines scattered across the echellogram</li>
 <li><strong>White-light images</strong> — continuous per-order wavelength-colored bands</li>
 </ul>
-<p>Both renderers are in <code>synthetic.py</code> and share the same coordinate system:
-x from grating dispersion, y from detector geometry.</p>
+<p>Both renderers are in <code>synthetic.py</code> and share the same coordinate system.  The x axis
+comes from an empirical <code>WavelengthSolution</code> when supplied, otherwise from theoretical
+grating dispersion.  The y axis comes from detector geometry.</p>
 <hr>
 <h2 id="coordinate-system">Coordinate system<a class="headerlink" href="#coordinate-system" title="Permanent link">¶</a></h2>
-<p>Each pixel in the synthetic image corresponds to a specific (wavelength, order) pair:</p>
+<p>Each pixel in the synthetic image corresponds to a specific <code>(wavelength, order)</code> pair:</p>
 <ul>
 <li><strong>x axis (dispersion direction)</strong>: wavelength position within an order, computed from
-  <code>linear_dispersion_nm_per_px</code> and the order's central wavelength</li>
-<li><strong>y axis (cross-dispersion direction)</strong>: order center position, from either
+  <code>WavelengthSolution.pixel_at()</code> or from <code>linear_dispersion_nm_per_px</code></li>
+<li><strong>y axis (cross-dispersion direction)</strong>: order center position from either
   <code>IDEAL_STRAIGHT</code> uniform spacing or <code>MEASURED_LHD_CMOS</code> polynomial traces</li>
 </ul>
 <p>The two axes are computed independently and combined only at render time.</p>
@@ -1392,75 +1449,94 @@ x from grating dispersion, y from detector geometry.</p>
 <h3 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">¶</a></h3>
 <p>For each input wavelength:</p>
 <ol>
-<li>Compute which order(s) it falls in using <code>physical_order_from_wavelength()</code></li>
-<li>Convert wavelength to x-pixel within that order using dispersion</li>
-<li>Look up the y-pixel for that order at that x using <code>_order_y_position()</code></li>
-<li>Paint a 2D Gaussian PSF centered at (x, y)</li>
+<li>Iterate over the requested diffraction orders.</li>
+<li>Convert wavelength to x-pixel using <code>WavelengthSolution.pixel_at()</code> when possible,
+   otherwise using theoretical dispersion.</li>
+<li>Look up the y-pixel for that order at that x.</li>
+<li>Paint a 2D Gaussian PSF centered at <code>(x, y)</code>.</li>
 </ol>
 <h3 id="psf-model">PSF model<a class="headerlink" href="#psf-model" title="Permanent link">¶</a></h3>
-<p>The PSF is an elliptical Gaussian with <strong>independent</strong> x and y widths:</p>
+<p>The PSF is an elliptical Gaussian with independent x and y widths:</p>
 <ul>
-<li><code>psf_sigma_x_px</code> — spectral width (dispersion direction), typically 1–3 px</li>
+<li><code>psf_sigma_px</code> — spectral width (dispersion direction), typically 1–3 px</li>
 <li><code>psf_sigma_y_px</code> — spatial/slit width (cross-dispersion), typically 8–15 px</li>
 </ul>
 <p>The slit image is taller than it is wide in a typical echelle setup.</p>
 <h3 id="noise">Noise<a class="headerlink" href="#noise" title="Permanent link">¶</a></h3>
 <p>Optional background and Gaussian read noise can be added:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">background</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>       <span class="c1"># ADU floor</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">read_noise_sigma</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>  <span class="c1"># Gaussian σ in ADU</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">lines</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">background</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>  <span class="c1"># ADU floor</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">read_noise</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>   <span class="c1"># Gaussian sigma in ADU</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>
 </code></pre></div>
 <h3 id="color-mode">Color mode<a class="headerlink" href="#color-mode" title="Permanent link">¶</a></h3>
 <p>Pass <code>color=True</code> to get an RGB image where each line is colored by its wavelength
-using <code>wavelength_to_rgb()</code>. Returns shape <code>(H, W, 3)</code> instead of <code>(H, W)</code>.</p>
+using <code>wavelength_to_rgb()</code>.  Returns shape <code>(H, W, 3)</code> instead of <code>(H, W)</code>.</p>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">lhd_cmos_echelle</span><span class="p">,</span> <span class="n">render_echelle_lines</span><span class="p">,</span> <span class="n">GeometryMode</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">lhd_cmos_echelle</span><span class="p">,</span> <span class="n">render_echelle_lines</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">spec</span> <span class="o">=</span> <span class="n">lhd_cmos_echelle</span><span class="p">()</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="mf">404.66</span><span class="p">,</span> <span class="mf">435.83</span><span class="p">,</span> <span class="mf">546.07</span><span class="p">,</span> <span class="mf">579.07</span><span class="p">,</span> <span class="mf">696.54</span><span class="p">,</span> <span class="mf">706.72</span><span class="p">,</span> <span class="mf">750.39</span><span class="p">,</span> <span class="mf">763.51</span><span class="p">]</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">lines</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">404.66</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">435.83</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">546.07</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">579.07</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">psf_sigma_x_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">background</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">read_noise_sigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">)</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="c1"># img.shape == (2160, 2560)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">lines</span><span class="p">,</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">psf_sigma_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">background</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="n">read_noise</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">)</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="c1"># img.shape == (2160, 2560)</span>
 </code></pre></div>
+<hr>
+<h2 id="empirical-wavelength-rendering">Empirical wavelength rendering<a class="headerlink" href="#empirical-wavelength-rendering" title="Permanent link">¶</a></h2>
+<p>Use the measured lookup table as the x-axis rule by passing a wavelength solution:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_lhd_cmos_wavelength_solution</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">solution</span> <span class="o">=</span> <span class="n">load_lhd_cmos_wavelength_solution</span><span class="p">()</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">lines</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">orders</span><span class="o">=</span><span class="n">solution</span><span class="o">.</span><span class="n">order_list</span><span class="p">(),</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">wavelength_solution</span><span class="o">=</span><span class="n">solution</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">)</span>
+</code></pre></div>
+<p>This is the preferred mode when comparing synthetic calibration frames to real LHD CMOS
+data.</p>
 <hr>
 <h2 id="white-light-renderer">White-light renderer<a class="headerlink" href="#white-light-renderer" title="Permanent link">¶</a></h2>
 <p><code>render_white_light()</code> fills each order with a continuous band of wavelength-colored
-pixels. It is useful for visualizing order layout and geometry.</p>
-<h3 id="how-it-works_1">How it works<a class="headerlink" href="#how-it-works_1" title="Permanent link">¶</a></h3>
+pixels.  It is useful for visualizing order layout and geometry.</p>
 <p>For each order:</p>
 <ol>
-<li>Compute the wavelength at every x pixel from dispersion</li>
-<li>Convert each wavelength to an RGB color using <code>wavelength_to_rgb()</code></li>
-<li>Paint a vertical stripe of configurable height centered on the order y-position</li>
+<li>Compute wavelength at every x pixel from <code>WavelengthSolution.wavelength_at()</code> or
+   theoretical dispersion.</li>
+<li>Convert each wavelength to an RGB color using <code>wavelength_to_rgb()</code>.</li>
+<li>Paint a Gaussian cross-dispersion profile centered on the order y-position.</li>
 </ol>
-<p>The result is always an RGB image of shape <code>(H, W, 3)</code>.</p>
 <h3 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">lhd_cmos_echelle</span><span class="p">,</span> <span class="n">render_white_light</span><span class="p">,</span> <span class="n">GeometryMode</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">spec</span> <span class="o">=</span> <span class="n">lhd_cmos_echelle</span><span class="p">()</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_white_light</span><span class="p">(</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">spec</span><span class="p">,</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">order_min</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">order_max</span><span class="o">=</span><span class="mi">58</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">order_width_px</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">)</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># img.shape == (2160, 2560, 3)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">lhd_cmos_echelle</span><span class="p">,</span> <span class="n">render_white_light</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">spec</span> <span class="o">=</span> <span class="n">lhd_cmos_echelle</span><span class="p">()</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_white_light</span><span class="p">(</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">MEASURED_LHD_CMOS</span><span class="p">,</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">)</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># img.shape == (2160, 2560, 3)</span>
 </code></pre></div>
 <hr>
 <h2 id="geometrymode-and-order_spacing_px">GeometryMode and order_spacing_px<a class="headerlink" href="#geometrymode-and-order_spacing_px" title="Permanent link">¶</a></h2>
-<p>When <code>geometry_mode=IDEAL_STRAIGHT</code>, orders are placed at:</p>
+<p>When <code>geometry=GeometryMode.IDEAL_STRAIGHT</code>, orders are placed at:</p>
 <div class="arithmatex">\[
 y_m = y_0 + (m - m_0) \times \texttt{order\_spacing\_px}
 \]</div>
@@ -1469,8 +1545,8 @@ It has no effect when <code>MEASURED_LHD_CMOS</code> is used, because y-position
 from the calibration pattern.</p>
 <hr>
 <h2 id="renderer-limitations">Renderer limitations<a class="headerlink" href="#renderer-limitations" title="Permanent link">¶</a></h2>
-<p>The synthetic renderer is a forward model for calibration and visualization. It is
-<strong>not</strong> a full instrument simulator:</p>
+<p>The synthetic renderer is a forward model for calibration and visualization.  It is not
+a full instrument simulator:</p>
 <table>
 <thead>
 <tr>
@@ -1500,8 +1576,8 @@ from the calibration pattern.</p>
 <td>Flat gain across the chip</td>
 </tr>
 <tr>
-<td>Dispersion is linear per order</td>
-<td>Higher-order dispersion terms not included</td>
+<td>Empirical coverage is finite</td>
+<td>Rendering falls back to theory outside calibrated ranges</td>
 </tr>
 </tbody>
 </table>

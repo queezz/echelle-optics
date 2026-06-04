@@ -539,6 +539,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/empirical_wavelengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Empirical Wavelengths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/synthetic_images/" class="md-nav__link">
         
   
@@ -1055,6 +1083,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1219,36 +1275,46 @@ from Hg, H, He, and Ar. The output is a grayscale float array on the full 2560 �
 detector.</p>
 <hr>
 <h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">lhd_cmos_echelle</span><span class="p">,</span> <span class="n">render_echelle_lines</span><span class="p">,</span> <span class="n">GeometryMode</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">echelle_optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryMode</span><span class="p">,</span> <span class="n">lhd_cmos_echelle</span><span class="p">,</span> <span class="n">render_echelle_lines</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">spec</span> <span class="o">=</span> <span class="n">lhd_cmos_echelle</span><span class="p">()</span>
 </code></pre></div>
 <hr>
 <h2 id="defining-calibration-lines">Defining calibration lines<a class="headerlink" href="#defining-calibration-lines" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Hg lines (nm)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">hg_lines</span> <span class="o">=</span> <span class="p">[</span><span class="mf">404.66</span><span class="p">,</span> <span class="mf">435.83</span><span class="p">,</span> <span class="mf">546.07</span><span class="p">,</span> <span class="mf">576.96</span><span class="p">,</span> <span class="mf">579.07</span><span class="p">]</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">hg_lines</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">404.66</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">435.83</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">546.07</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">576.96</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">579.07</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># H Balmer lines</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">h_lines</span> <span class="o">=</span> <span class="p">[</span><span class="mf">486.13</span><span class="p">,</span> <span class="mf">656.28</span><span class="p">]</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">h_lines</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">486.13</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">656.28</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># He lines</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">he_lines</span> <span class="o">=</span> <span class="p">[</span><span class="mf">447.15</span><span class="p">,</span> <span class="mf">501.57</span><span class="p">,</span> <span class="mf">587.56</span><span class="p">,</span> <span class="mf">667.82</span><span class="p">,</span> <span class="mf">706.52</span><span class="p">]</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">he_lines</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">447.15</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">501.57</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">587.56</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">667.82</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">706.52</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># Ar lines</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">ar_lines</span> <span class="o">=</span> <span class="p">[</span><span class="mf">696.54</span><span class="p">,</span> <span class="mf">706.72</span><span class="p">,</span> <span class="mf">750.39</span><span class="p">,</span> <span class="mf">763.51</span><span class="p">,</span> <span class="mf">772.42</span><span class="p">,</span> <span class="mf">794.82</span><span class="p">,</span> <span class="mf">811.53</span><span class="p">,</span> <span class="mf">826.45</span><span class="p">]</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">lines</span> <span class="o">=</span> <span class="n">hg_lines</span> <span class="o">+</span> <span class="n">h_lines</span> <span class="o">+</span> <span class="n">he_lines</span> <span class="o">+</span> <span class="n">ar_lines</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">ar_lines</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="p">(</span><span class="mf">696.54</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="p">(</span><span class="mf">706.72</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="p">(</span><span class="mf">750.39</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="p">(</span><span class="mf">763.51</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="p">(</span><span class="mf">772.42</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="p">(</span><span class="mf">794.82</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="p">(</span><span class="mf">811.53</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="p">(</span><span class="mf">826.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="p">]</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="n">lines</span> <span class="o">=</span> <span class="n">hg_lines</span> <span class="o">+</span> <span class="n">h_lines</span> <span class="o">+</span> <span class="n">he_lines</span> <span class="o">+</span> <span class="n">ar_lines</span>
 </code></pre></div>
 <hr>
 <h2 id="rendering">Rendering<a class="headerlink" href="#rendering" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">img</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">spec</span><span class="p">,</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">lines</span><span class="p">,</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">psf_sigma_x_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">lines</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">psf_sigma_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">)</span>
 </code></pre></div>
 <p>Default rendering uses straight orders. For curved (realistic) orders, pass
 <code>GeometryMode.MEASURED_LHD_CMOS</code>.</p>
@@ -1265,7 +1331,7 @@ detector.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>psf_sigma_x_px</code></td>
+<td><code>psf_sigma_px</code></td>
 <td>1.5 px</td>
 <td>Instrument line spread function (spectral resolution)</td>
 </tr>
@@ -1295,14 +1361,16 @@ isolated lines from washing out the display.</p>
 <hr>
 <h2 id="color-version">Color version<a class="headerlink" href="#color-version" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">img_color</span> <span class="o">=</span> <span class="n">render_echelle_lines</span><span class="p">(</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">spec</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">geometry_mode</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">psf_sigma_x_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">)</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># img_color.shape == (2160, 2560, 3)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">lines</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">spec</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">orders</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">geometry</span><span class="o">=</span><span class="n">GeometryMode</span><span class="o">.</span><span class="n">IDEAL_STRAIGHT</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">psf_sigma_px</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">psf_sigma_y_px</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">order_spacing_px</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">)</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1"># img_color.shape == (2160, 2560, 3)</span>
 </code></pre></div>
 <p>Each line is colored by its wavelength using <code>wavelength_to_rgb()</code>. UV and IR lines
 outside 380–780 nm appear dark.</p>
@@ -1321,11 +1389,11 @@ outside 380–780 nm appear dark.</p>
 <td>All lines rendered at equal amplitude</td>
 </tr>
 <tr>
-<td>Linear dispersion only</td>
-<td>Slight wavelength error near order edges</td>
+<td>Theory fallback outside calibration</td>
+<td>Empirical lookup is finite per order</td>
 </tr>
 <tr>
-<td>Ideal straight orders</td>
+<td>Ideal straight orders unless geometry is supplied</td>
 <td>Real orders curve by up to ~15 px</td>
 </tr>
 <tr>
