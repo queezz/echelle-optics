@@ -21,3 +21,4 @@ jupyter lab
 | `03_dispersion_intuition.ipynb` | [Dispersion Intuition](dispersion_intuition.md) | Low-level grating calculations |
 | `04_synthetic_image_parameters.ipynb` | [Synthetic Parameters](synthetic_parameters.md) | PSF, spacing, noise parameter sweeps |
 | `05_detector_geometry.ipynb` | [Detector Geometry](detector_geometry.md) | Empirical curvature data and polynomial fits |
+| `06_wavelength_calibration.ipynb` | [Empirical Wavelengths](../guide/empirical_wavelengths.md) | Lookup-table wavelength solution and empirical rendering |

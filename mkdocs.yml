@@ -78,6 +78,7 @@ nav:
       - Getting Started: guide/getting_started.md
       - Echelle Physics: guide/echelle_physics.md
       - Detector Geometry: guide/detector_geometry.md
+      - Empirical Wavelengths: guide/empirical_wavelengths.md
       - Synthetic Images: guide/synthetic_images.md
       - Architecture: guide/architecture.md
   - Examples:

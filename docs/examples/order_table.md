@@ -67,14 +67,14 @@ in wavelength space.
 ## White-light overview
 
 ```python
-from echelle_optics import render_white_light, GeometryMode
+from echelle_optics import GeometryMode, render_white_light
 
 img = render_white_light(
     spec,
-    order_min=30, order_max=58,
-    geometry_mode=GeometryMode.IDEAL_STRAIGHT,
+    orders=range(30, 59),
+    geometry=GeometryMode.IDEAL_STRAIGHT,
     order_spacing_px=65,
-    order_width_px=20,
+    psf_sigma_y_px=20,
 )
 ```
 

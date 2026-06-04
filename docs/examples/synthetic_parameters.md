@@ -27,14 +27,14 @@ def show(img, ax, title="", pct=99.5):
 
 ## PSF sigma (spectral direction)
 
-`psf_sigma_x_px` controls the width of each line in the dispersion direction.
+`psf_sigma_px` controls the width of each line in the dispersion direction.
 
 Typical values: 1–4 px. Smaller values give sharper lines; larger values approximate
 lower spectral resolution or defocus.
 
 ```python
 for sigma_x in [0.5, 1.5, 3.0, 5.0]:
-    img = render_echelle_lines(spec, lines, psf_sigma_x_px=sigma_x, ...)
+    img = render_echelle_lines(lines, spec, orders=range(30, 59), psf_sigma_px=sigma_x, ...)
 ```
 
 ---
@@ -48,7 +48,7 @@ Typical values: 5–20 px. The default of 12 px corresponds to a ~80 µm slit.
 
 ```python
 for sigma_y in [3.0, 8.0, 12.0, 20.0]:
-    img = render_echelle_lines(spec, lines, psf_sigma_y_px=sigma_y, ...)
+    img = render_echelle_lines(lines, spec, orders=range(30, 59), psf_sigma_y_px=sigma_y, ...)
 ```
 
 ---
@@ -63,7 +63,7 @@ detector height).
 
 ```python
 for spacing in [45, 55, 65, 75]:
-    img = render_echelle_lines(spec, lines, order_spacing_px=spacing, ...)
+    img = render_echelle_lines(lines, spec, orders=range(30, 59), order_spacing_px=spacing, ...)
 ```
 
 ---
@@ -75,19 +75,19 @@ thermal dark current, or a bright plasma continuum.
 
 ```python
 for bg in [0, 20, 100, 500]:
-    img = render_echelle_lines(spec, lines, background=bg, ...)
+    img = render_echelle_lines(lines, spec, orders=range(30, 59), background=bg, ...)
 ```
 
 ---
 
 ## Read noise
 
-`read_noise_sigma` adds Gaussian noise with the given standard deviation. Models
+`read_noise` adds Gaussian noise with the given standard deviation. Models
 detector read noise.
 
 ```python
 for noise in [0, 3, 10, 30]:
-    img = render_echelle_lines(spec, lines, read_noise_sigma=noise, ...)
+    img = render_echelle_lines(lines, spec, orders=range(30, 59), read_noise=noise, ...)
 ```
 
 ---
@@ -98,8 +98,8 @@ Passing `color=True` returns an `(H, W, 3)` RGB array instead of `(H, W)` graysc
 Each line is colored by its wavelength using `wavelength_to_rgb()`.
 
 ```python
-img_gray  = render_echelle_lines(spec, lines, color=False)   # (2160, 2560)
-img_color = render_echelle_lines(spec, lines, color=True)    # (2160, 2560, 3)
+img_gray = render_echelle_lines(lines, spec, orders=range(30, 59), color=False)
+img_color = render_echelle_lines(lines, spec, orders=range(30, 59), color=True)
 ```
 
 ---
@@ -110,7 +110,7 @@ To tune the renderer to match a specific real calibration frame:
 
 1. Display the real frame with the same percentile stretch
 2. Identify isolated bright lines and measure their pixel width (x) and height (y)
-3. Set `psf_sigma_x_px` to ~half the FWHM in x (FWHM ≈ 2.35 σ)
+3. Set `psf_sigma_px` to ~half the FWHM in x (FWHM ≈ 2.35 σ)
 4. Set `psf_sigma_y_px` similarly for y
 5. Measure the inter-order spacing from the real frame and set `order_spacing_px`
 6. Use `GeometryMode.MEASURED_LHD_CMOS` to match the curvature

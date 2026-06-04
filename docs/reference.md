@@ -36,6 +36,14 @@ Empirical curved order traces.
 
 ---
 
+## Calibration
+
+Empirical wavelength lookup-table structures and per-order polynomial fits.
+
+::: echelle_optics.calibration
+
+---
+
 ## Synthetic
 
 2D image renderer.

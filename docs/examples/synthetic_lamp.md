@@ -11,7 +11,7 @@ detector.
 ## Setup
 
 ```python
-from echelle_optics import lhd_cmos_echelle, render_echelle_lines, GeometryMode
+from echelle_optics import GeometryMode, lhd_cmos_echelle, render_echelle_lines
 
 spec = lhd_cmos_echelle()
 ```
@@ -22,16 +22,25 @@ spec = lhd_cmos_echelle()
 
 ```python
 # Hg lines (nm)
-hg_lines = [404.66, 435.83, 546.07, 576.96, 579.07]
+hg_lines = [(404.66, 1.0), (435.83, 1.0), (546.07, 1.0), (576.96, 1.0), (579.07, 1.0)]
 
 # H Balmer lines
-h_lines = [486.13, 656.28]
+h_lines = [(486.13, 1.0), (656.28, 1.0)]
 
 # He lines
-he_lines = [447.15, 501.57, 587.56, 667.82, 706.52]
+he_lines = [(447.15, 1.0), (501.57, 1.0), (587.56, 1.0), (667.82, 1.0), (706.52, 1.0)]
 
 # Ar lines
-ar_lines = [696.54, 706.72, 750.39, 763.51, 772.42, 794.82, 811.53, 826.45]
+ar_lines = [
+    (696.54, 1.0),
+    (706.72, 1.0),
+    (750.39, 1.0),
+    (763.51, 1.0),
+    (772.42, 1.0),
+    (794.82, 1.0),
+    (811.53, 1.0),
+    (826.45, 1.0),
+]
 
 lines = hg_lines + h_lines + he_lines + ar_lines
 ```
@@ -42,10 +51,11 @@ lines = hg_lines + h_lines + he_lines + ar_lines
 
 ```python
 img = render_echelle_lines(
-    spec,
     lines,
-    geometry_mode=GeometryMode.IDEAL_STRAIGHT,
-    psf_sigma_x_px=1.5,
+    spec,
+    orders=range(30, 59),
+    geometry=GeometryMode.IDEAL_STRAIGHT,
+    psf_sigma_px=1.5,
     psf_sigma_y_px=12.0,
     order_spacing_px=65,
 )
@@ -62,7 +72,7 @@ The two PSF widths model different physical effects:
 
 | Parameter | Default | Models |
 |---|---|---|
-| `psf_sigma_x_px` | 1.5 px | Instrument line spread function (spectral resolution) |
+| `psf_sigma_px` | 1.5 px | Instrument line spread function (spectral resolution) |
 | `psf_sigma_y_px` | 12 px | Slit image height (spatial extent of the source) |
 
 For a 100 µm slit at f/10, the slit image on the detector is approximately
@@ -93,9 +103,11 @@ isolated lines from washing out the display.
 
 ```python
 img_color = render_echelle_lines(
-    spec, lines,
-    geometry_mode=GeometryMode.IDEAL_STRAIGHT,
-    psf_sigma_x_px=1.5,
+    lines,
+    spec,
+    orders=range(30, 59),
+    geometry=GeometryMode.IDEAL_STRAIGHT,
+    psf_sigma_px=1.5,
     psf_sigma_y_px=12.0,
     order_spacing_px=65,
     color=True,
@@ -113,8 +125,8 @@ outside 380–780 nm appear dark.
 | Limitation | Effect |
 |---|---|
 | No blaze efficiency | All lines rendered at equal amplitude |
-| Linear dispersion only | Slight wavelength error near order edges |
-| Ideal straight orders | Real orders curve by up to ~15 px |
+| Theory fallback outside calibration | Empirical lookup is finite per order |
+| Ideal straight orders unless geometry is supplied | Real orders curve by up to ~15 px |
 | No inter-order cross-talk | Each order is fully isolated |
 | No optical aberrations | PSF is perfectly elliptical Gaussian |
 

@@ -17,7 +17,8 @@ echelle_optics/
 ├── synthetic.py      ← 2D image renderer
 ├── color.py          ← wavelength → RGB
 └── data/
-    └── pattern_CMOS_20240305.txt   ← measured order positions
+    ├── pattern_CMOS_20240305.txt        ← measured order positions
+    └── Th_wavelength_CMOS_20240305.txt  ← measured wavelength lookup table
 ```
 
 ---
@@ -35,7 +36,7 @@ flowchart TB
         GEO[geometry.py]
         PAT[(data/pattern_*.txt)]
     end
-    subgraph cal["Wavelength calibration primitives (planned)"]
+    subgraph cal["Wavelength calibration primitives"]
         WS[calibration.py]
     end
     subgraph render["Synthetic rendering"]
@@ -89,16 +90,16 @@ question: given an order index and an x pixel, what y pixel is the order center 
 The renderer imports from both Layer 1 and Layer 2 but does not modify either. It is
 the only place where x and y coordinates are combined.
 
-### Layer 4 — Wavelength calibration primitives (planned)
+### Layer 4 — Wavelength calibration primitives
 
 | Module | Responsibility |
 |---|---|
-| `calibration.py` (future) | `WavelengthSolution` data structure, `wavelength_at(x, order)`, residual containers |
+| `calibration.py` | `WavelengthSolution` data structure, `wavelength_at(x, order)`, `pixel_at(wavelength, order)`, residual containers |
 
 This layer consumes both Layer 1 (dispersion for initial guesses) and Layer 2
-(geometry traces for 2D mapping). It provides the data structures that extraction
-pipelines in `echelle_spectra` populate and consume. Fitting arc lines to pixel
-positions is the responsibility of `echelle_spectra`, not this module.
+(geometry traces for 2D mapping). It provides the data structures that synthetic
+rendering and extraction pipelines can consume. Fitting or correcting arc-line
+centroids from real detector frames is the responsibility of `echelle_spectra`.
 
 ---
 
@@ -135,7 +136,8 @@ lines (wavelengths, nm)
 physical_order_from_wavelength()          ← grating.py
         │
         ▼
-wavelength → x pixel                      ← dispersion from spectrometer.py
+wavelength → x pixel                      ← calibration.py when provided,
+                                             otherwise spectrometer.py
         │
         ▼
 (order, x) → y pixel                      ← geometry.py or ideal spacing
@@ -173,6 +175,11 @@ from echelle_optics import (
     # Geometry
     GeometryMode, OrderTrace, DetectorGeometry,
     load_lhd_cmos_geometry, load_lhd_cmos_pattern, fit_order_traces,
+
+    # Wavelength calibration primitives
+    CalibrationLine, OrderWavelengthFit, WavelengthSolution,
+    load_lhd_cmos_calibration, fit_wavelength_solution,
+    load_lhd_cmos_wavelength_solution,
 
     # Rendering
     render_echelle_lines, render_white_light,

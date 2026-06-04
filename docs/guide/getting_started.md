@@ -80,18 +80,18 @@ Each row covers one diffraction order and includes:
 ### Render a synthetic emission-line image
 
 ```python
-from echelle_optics import render_echelle_lines, GeometryMode
+from echelle_optics import GeometryMode, render_echelle_lines
 
 # Hg/Ar calibration lines (nm)
-lines = [404.66, 435.83, 546.07, 579.07, 696.54, 706.72, 750.39, 763.51]
+lines = [(404.66, 1.0), (435.83, 1.0), (546.07, 1.0), (579.07, 1.0)]
 
 img = render_echelle_lines(
-    spec,
     lines,
-    geometry_mode=GeometryMode.MEASURED_LHD_CMOS,
-    psf_sigma_x_px=1.5,
+    spec,
+    orders=range(30, 59),
+    geometry=GeometryMode.MEASURED_LHD_CMOS,
+    psf_sigma_px=1.5,
     psf_sigma_y_px=12.0,
-    order_spacing_px=65,
 )
 ```
 
@@ -124,6 +124,7 @@ Open notebooks in order:
 | `03_dispersion_intuition.ipynb` | Low-level grating dispersion |
 | `04_synthetic_image_parameters.ipynb` | PSF and rendering parameter sweeps |
 | `05_detector_geometry.ipynb` | Empirical curved order geometry |
+| `06_wavelength_calibration.ipynb` | Empirical wavelength lookup-table dispersion |
 
 ---
 

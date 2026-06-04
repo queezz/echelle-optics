@@ -17,13 +17,14 @@ This package contains:
 - Grating dispersion math (Littrow approximation, FSR, linear dispersion)
 - Instrument model and per-order tables as pandas DataFrames
 - Empirical curved order traces from real detector calibration data
+- Empirical wavelength lookup-table primitives for pixel-to-wavelength mapping
 - Synthetic 2D echellogram renderer (emission lines + white-light continuum)
 - Wavelength-to-RGB helper for display
 
 This package intentionally does **not** contain:
 
 - Full optical raytrace or Zemax-style simulation
-- Wavelength calibration (fitting arc lines to pixel positions)
+- Production wavelength-calibration execution against real lamp frames
 - Spectral extraction from real frames
 - Instrument control or data acquisition
 
@@ -38,7 +39,7 @@ The repository keeps five concerns strictly separated:
 | **Spectral physics** | Grating equation, order wavelengths, dispersion |
 | **Detector geometry** | Empirical curved order positions — per instrument profile |
 | **Synthetic rendering** | 2D image generation consuming physics + geometry |
-| **Wavelength calibration primitives** | Pixel→wavelength mapping structures (planned) |
+| **Wavelength calibration primitives** | Pixel→wavelength lookup structures and residuals |
 | **Pipeline execution** | Arc fitting, extraction, SpectroCube production → `echelle_spectra` |
 
 See [Architecture](guide/architecture.md) for the module dependency diagram and
@@ -52,6 +53,7 @@ See [Architecture](guide/architecture.md) for the module dependency diagram and
 - [Getting Started](guide/getting_started.md) — install, quickstart
 - [Echelle Physics](guide/echelle_physics.md) — grating equation and order tables
 - [Detector Geometry](guide/detector_geometry.md) — empirical curved order traces
+- [Empirical Wavelengths](guide/empirical_wavelengths.md) — lookup-table dispersion
 - [Synthetic Images](guide/synthetic_images.md) — rendering emission lines and continua
 - [Architecture](guide/architecture.md) — module map and data flow
 - [Examples](examples/index.md) — annotated notebook walkthroughs

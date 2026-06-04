@@ -86,18 +86,19 @@ The notebook renders white-light images in both geometry modes and displays them
 side by side:
 
 ```python
-from echelle_optics import render_white_light, GeometryMode
+from echelle_optics import GeometryMode, render_white_light
 
 img_ideal = render_white_light(
-    spec, 30, 58,
-    geometry_mode=GeometryMode.IDEAL_STRAIGHT,
+    spec,
+    orders=range(30, 59),
+    geometry=GeometryMode.IDEAL_STRAIGHT,
     order_spacing_px=65,
 )
 
 img_curved = render_white_light(
-    spec, 30, 58,
-    geometry_mode=GeometryMode.MEASURED_LHD_CMOS,
-    order_spacing_px=65,
+    spec,
+    orders=range(30, 59),
+    geometry=GeometryMode.MEASURED_LHD_CMOS,
 )
 ```
 

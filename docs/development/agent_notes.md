@@ -48,7 +48,7 @@ The package is profile-driven. An instrument profile is the combination of:
 
 - A configured `EchelleSpectrometer` (grating, detector, focal length, beta angle)
 - A `DetectorGeometry` — empirical order traces from a calibration measurement
-- Optionally: a wavelength solution (future)
+- Optionally: a wavelength solution
 
 The LHD CMOS profile is accessed via `lhd_cmos_echelle()` and
 `load_lhd_cmos_geometry()`. A different instrument would provide its own factory
@@ -73,8 +73,8 @@ must be passed as an argument, not embedded as a constant.
 **Do not add pixel y-positions or curvature logic to `EchelleSpectrometer`.**
 **Do not add wavelength or dispersion logic to `DetectorGeometry`.**
 
-The only place both are combined is `synthetic.py` (rendering) and, in the future,
-a calibration mapping module.
+The only places both are combined are `synthetic.py` (rendering) and
+`calibration.py` (pixel-to-wavelength mapping primitives).
 
 ### Geometry is empirical
 
@@ -92,8 +92,8 @@ over time. Future architecture should support multiple calibration dates per ins
 ### Synthetic rendering does not fit calibrations
 
 `synthetic.py` generates 2D images. It does not identify lines, optimize solutions,
-or fit polynomials to real frame data. That logic belongs in `echelle_spectra` or in
-a future `calibration.py` module inside this package.
+or fit polynomials to real frame data. That execution logic belongs in
+`echelle_spectra`; `calibration.py` only stores and evaluates wavelength mappings.
 
 **Do not add arc-line fitting or detector optimization to `synthetic.py`.**
 
@@ -113,6 +113,7 @@ in production analysis and never silently fall back to it.
 | `detector.py` | `Detector` dataclass, pixel count, pixel size, mm dimensions | Wavelengths, geometry |
 | `spectrometer.py` | `EchelleSpectrometer`, order table, instrument factory functions | Geometry, rendering, calibration |
 | `geometry.py` | Load calibration pattern, fit traces, `y_at(order, x)` | Wavelengths, rendering |
+| `calibration.py` | Load curated wavelength lookup tables, fit/evaluate \(\lambda(x)\) per order | Real-frame centroid fitting, extraction |
 | `synthetic.py` | Combine physics + geometry into 2D images | Physics derivations, calibration fitting |
 | `color.py` | Wavelength → linear RGB for display | Anything else |
 
@@ -125,7 +126,8 @@ in production analysis and never silently fall back to it.
 ```
 lines (nm)
     → physical_order_from_wavelength()           [grating.py]
-    → wavelength → x pixel (dispersion)          [spectrometer.py]
+    → wavelength → x pixel                       [calibration.py if provided,
+                                                   otherwise spectrometer.py]
     → (order, x) → y pixel                       [geometry.py]
     → Gaussian PSF at (x, y)                     [synthetic.py]
     → 2D float array (H × W)
@@ -137,9 +139,9 @@ lines (nm)
 arc frame (real detector image)           [echelle_spectra]
     → line centroid detection             [echelle_spectra]
     → (order, x, y) centroids
-    → match to line list                  [calibration module, future]
-    → fit wavelength solution             [calibration module, future]
-    → wavelength_at(x, order) callable    [echelle_optics, future]
+    → match to line list                  [echelle_spectra]
+    → fit or correct wavelength solution  [echelle_spectra]
+    → wavelength_at(x, order) callable    [echelle_optics]
     → SpectroCube output                  [echelle_spectra → spectrocube]
 ```
 
@@ -160,6 +162,16 @@ If the instrument is realigned or the detector is moved, measure a new calibrati
 and add a new data file. Do not overwrite the existing file — old files document the
 instrument history and are needed for reprocessing older observations.
 
+`src/echelle_optics/data/Th_wavelength_CMOS_20240305.txt`
+
+- Rows: manually curated lamp-line identifications from `echelle_spectra`
+- Columns: order label, pixel interval, fitted center pixel, wavelength, species
+- Order labels: 0–28, mapped to physical orders 30–58 by `calibration.py`
+- Lamps: ThAr, Ne, Hg, H2
+
+This table is an empirical dispersion rule for rendering and validation. New corrected
+tables should be added as new files, not by overwriting this historical calibration.
+
 ---
 
 ## Testing
@@ -167,7 +179,8 @@ instrument history and are needed for reprocessing older observations.
 ```
 tests/
 ├── test_hello.py       ← grating formulas, order table, color, synthetic render shapes
-└── test_geometry.py    ← pattern load (2560×29), fit residuals < 1 px, curved ≠ ideal
+├── test_geometry.py    ← pattern load (2560×29), fit residuals < 1 px, curved ≠ ideal
+└── test_calibration.py ← wavelength table parsing, λ(x), pixel inversion, renderer hooks
 ```
 
 When adding new modules, add corresponding tests. Tests are the minimal guarantee that

@@ -44,15 +44,19 @@ Planned:
 
 ## Wavelength calibration primitives
 
-**Status**: not started
+**Status**: partial — LHD CMOS table loading and per-order fits exist
 
-This package should provide the **data structures and mappings** for wavelength
-calibration — not the full arc-fitting pipeline. Concretely:
+This package provides the first **data structures and mappings** for wavelength
+calibration — not the full arc-fitting pipeline. Current support includes:
 
 - `WavelengthSolution` — stores per-order polynomial \(\lambda(x)\), residuals,
-  fit uncertainty
+  and input calibration points
 - `wavelength_at(x, order)` — evaluates the solution at a pixel position
 - `pixel_at(wavelength, order)` — inverse mapping
+
+Planned:
+
+- Fit uncertainty
 - Support for global 2D solutions \(\lambda(x, y)\) interpolated across orders
 
 The fitting of arc-lamp centroid positions to produce a `WavelengthSolution` is the

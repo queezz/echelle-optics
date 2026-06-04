@@ -31,7 +31,7 @@ flowchart TB
 Provides:
 - Echelle diffraction physics — Littrow approximation, order tables, dispersion
 - Instrument profile system — configurable `EchelleSpectrometer` + empirical `DetectorGeometry`
-- Wavelength calibration primitives — pixel→wavelength mapping structures (planned)
+- Wavelength calibration primitives — pixel→wavelength mapping structures
 - Synthetic 2D detector image renderer — for development and calibration validation
 
 Does **not** include:
